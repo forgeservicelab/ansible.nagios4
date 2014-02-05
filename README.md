@@ -18,6 +18,11 @@ This playbook does not include all resources so it is necessary to run it in two
 - Run the ```resource-fetch.yml``` playbook, this should retrieve all the required files
 - Run the ```nagios.yml``` playbook, this will install nagios on the target machine(s)
 
+Your target machine should have the nagios web interface available on http://<host>/nagios
+
+### To override the default Web Interface password:
+The Web interface password is defined on the nagios4 role via the ```nagios_web_password``` variable, this can be overriden by redefining its value on ```roles/nagios4/vars/main.yml```, note that you need to run the ```resource-fetch.yml``` playbook prior to this.
+
 ToDo:
 -----
 
