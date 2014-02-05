@@ -1,0 +1,24 @@
+- hosts: 127.0.0.1
+  sudo: False
+  connection: local
+  vars_files:
+    - vars/versions.yml
+
+  tasks:
+  - name: get roles from gitlab
+    git:
+      repo=https://git.forgeservicelab.fi/ansible-roles/{{ item }}.git
+      dest=roles/{{ item }}
+    with_items:
+      - common
+      - nagios4
+
+  - name: get nagios core 
+    shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nagios-{{ nagios_version }}.tar.gz 
+      chdir=roles/nagios4/files
+      creates=roles/nagios4/files/nagios-{{ nagios_version }}.tar.gz
+
+  - name: get nagios plugins
+    shell: wget https://www.nagios-plugins.org/download/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
+      chdir=roles/nagios4/files
+      creates=roles/nagios4/files/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
