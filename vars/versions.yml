@@ -1,3 +1,4 @@
 ---
 nagios_version: 4.0.2
 nagios_plugins_version: 1.5
+nrpe_version: 2.15

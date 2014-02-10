@@ -23,3 +23,8 @@
     shell: wget https://www.nagios-plugins.org/download/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
       chdir=roles/nagios4/files
       creates=roles/nagios4/files/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
+
+  - name: get nrpe
+    shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nrpe-{{ nrpe_version }}.tar.gz
+      chdir=roles/nagios4/files
+      creates=roles/nagios4/files/nrpe-{{ nrpe_version }}.tar.gz

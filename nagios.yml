@@ -1,6 +1,21 @@
 ---
-- hosts: nagios
+- hosts: nagios-core
   sudo: True
+  tags:
+    - core
+  vars:
+    - is_core: True
+  vars_files:
+    - vars/versions.yml
+  roles:
+    - nagios4
+
+- hosts: nagios-remotes
+  sudo: True
+  tags:
+    - remotes
+  vars:
+    - is_core: False
   vars_files:
     - vars/versions.yml
   roles:
