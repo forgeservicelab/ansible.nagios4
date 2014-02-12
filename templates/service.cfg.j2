@@ -1,0 +1,32 @@
+define service {
+  host_name		{{ remote_hostname }}
+{% for option in [
+	'service_description',
+	'check_command',
+	'max_check_attempts',
+	'check_interval',
+	'retry_interval',
+	'check_period',
+	'notification_interval',
+	'notification_period',
+	'contacts',
+	'contact_groups' ] %}
+  {{ option }}		{{ item[option] }}
+{% endfor %}
+{% for option in [
+	'hostgroup_name',
+	'display_name',
+	'parents',
+	'hourly_value',
+	'servicegroups',
+	'is_volatile',
+	'initial_state',
+	'active_checks_enabled',
+	'passive_checks_enabled',
+	'obsess',
+	'check_freshness' ] %}
+{% if option in item.keys() %}
+  {{ option }}		{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

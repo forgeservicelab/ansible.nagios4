@@ -1,0 +1,15 @@
+define hostdependency {
+  dependent_host_name		{{ item.dependent_host_name }}
+  host_name			{{ item.host_name }}
+{% for option in [
+	'dependent_hostgroup_name',
+	'hostgroup_name',
+	'inherits_parent',
+	'execution_failure_criteria',
+	'notification_failure_criteria',
+	'dependency_period' ] %}
+{% if option in item.keys() %}
+  {{ option }}			{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

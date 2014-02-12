@@ -1,0 +1,14 @@
+define servicegroup {
+  servicegroup_name	{{ item.servicegroup_name }}
+  alias			{{ item.servicegroup_alias }}
+{% for option in [
+	'members',
+	'servicegroup_members',
+	'notes',
+	'notes_url',
+	'action_url' ] %}
+{% if option in item.keys() %}
+  {{ option }}		{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

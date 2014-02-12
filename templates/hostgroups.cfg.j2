@@ -1,0 +1,9 @@
+define hostgroup {
+  hostgroup_name	{{ item.hostgroup_name }}
+  alias			{{ item.hostgroup_alias }}
+{% for option in [ 'members', 'hostgroup_members', 'notes', 'notes_url', 'action_url' ] %}
+{% if option in item.keys() %}
+  {{ option }}		{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

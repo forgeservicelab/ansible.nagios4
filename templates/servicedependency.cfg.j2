@@ -1,0 +1,22 @@
+define servicedependency {
+{% for option in [
+	'dependent_host_name',
+	'dependent_service_description',
+	'host_name',
+	'service_description' ] %}
+  {{ option }}			{{ item[option] }}
+{% endfor %}
+{% for option in [
+	'dependent_hostgroup_name',
+	'servicegroup_name',
+	'dependent_servicegroup_name',
+	'hostgroup_name',
+	'inherits_parent',
+	'execution_failure_criteria',
+	'notification_failure_criteria',
+	'dependency_period' ] %}
+{% if option in item.keys() %}
+  {{ option }}			{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

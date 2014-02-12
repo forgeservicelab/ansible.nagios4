@@ -1,0 +1,25 @@
+---
+host:
+  - remote_ip: 193.166.24.123
+    alias: Forge ServiceLab Support
+    max_check_attempts: 3
+    check_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    notification_interval: 0
+    notification_period: 24x7
+    display_name: Support Machine
+
+apache_service:
+  - service_description: Test description
+    check_command: bogus_command
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    is_volatile: 0
+    obsess: 1

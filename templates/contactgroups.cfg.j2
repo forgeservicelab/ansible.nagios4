@@ -1,0 +1,9 @@
+define contactgroup {
+  contactgroup_name	{{ item.contactgroup_name }}
+  alias			{{ item.contactgroup_alias }}
+{% for option in [ 'members', 'contactgroup_members' ] %}
+{% if option in item.keys() %}
+  {{ option }}		{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

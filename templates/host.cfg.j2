@@ -1,0 +1,11 @@
+define host {
+  host_name		{{ remote_hostname }}
+{% for option in [ 'alias', 'address', 'max_check_attempts', 'check_period', 'contacts', 'contact_groups', 'notification_interval', 'notification_period' ] %}
+  {{ option }}		{{ item[option] }}
+{% endfor %}
+{% for option in [ 'display_name', 'parents', 'hourly_value', 'hostgroups' ] %}
+{% if option in item.keys() %}
+  {{ option }}		{{ item[option] }}
+{% endif %}
+{% endfor %}
+}

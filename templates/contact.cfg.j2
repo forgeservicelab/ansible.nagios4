@@ -1,0 +1,24 @@
+define contact {
+{% for option in [
+	'contact_name',
+	'host_notifications_enabled',
+	'service_notifications_enabled',
+	'host_notification_period',
+	'service_notification_period',
+	'host_notification_options',
+	'service_notification_options' ] %}
+  {{ option }}			{{ item[option] }}
+{% endfor %}
+{% for option in [
+	'contactgroups',
+	'email',
+	'pager',
+	'addressx',
+	'can_submit_commands',
+	'retain_status_information',
+	'retain_nonstatus_information' ] %}
+{% if option in item.keys() %}
+  {{ option }}			{{ item[option] }}
+{% endif %}
+{% endfor %}
+}
