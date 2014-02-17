@@ -1,0 +1,7 @@
+---
+contactgroups:
+  - contactgroup_name: noone
+    contactgroup_alias: Empty contact group
+
+  - contactgroup_name: digile
+    contactgroup_alias: Digile staff contact group
