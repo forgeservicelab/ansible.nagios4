@@ -46,3 +46,27 @@
     owner=nagios
     group=nagios
     mode=0664
+
+- name: Create clean directory for Contact Group fragments
+  file:
+    path=/tmp/cntg
+    state="{{ item }}"
+  with_items:
+    - absent
+    - directory
+
+- name: Create Contact Group fragments
+  template:
+    src=templates/contactgroups.cfg.j2
+    dest="/tmp/cntg/cntg-{{ item.contactgroup_name }}"
+  with_items:
+    - "{{ contactgroups }}"
+
+- name: Compose Contact Groups configuration
+  assemble:
+    src=/tmp/cntg
+    dest=/usr/local/nagios/etc/objects-extra/02-ContactGroups.cfg
+    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
+    owner=nagios
+    group=nagios
+    mode=0664

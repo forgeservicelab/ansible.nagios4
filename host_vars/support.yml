@@ -1,6 +1,6 @@
 ---
 host:
-  - remote_ip: 193.166.24.123
+  - address: 193.166.24.123
     alias: Forge ServiceLab Support
     max_check_attempts: 3
     check_period: 24x7
@@ -11,8 +11,8 @@ host:
     display_name: Support Machine
 
 apache_service:
-  - service_description: Test description
-    check_command: bogus_command
+  - service_description: "NRPE apache service check"
+    check_command: "check_nrpe!check_apache"
     max_check_attempts: 3
     check_interval: 5
     retry_interval: 1
@@ -21,13 +21,101 @@ apache_service:
     notification_period: 24x7
     contacts: nagiosadmin
     contact_groups: admins
-    is_volatile: 0
-    obsess: 1
+    servicegroups: Availability
+
+mysql_service:
+  - service_description: "NRPE mysql service check"
+    check_command: "check_nrpe!check_mysql"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Availability
+
+xmpp_service:
+  - service_description: "NRPE jabber service check"
+    check_command: "check_nrpe!check_jabber"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Availability
+
+root_check:
+  - service_description: "NRPE root disk usage check"
+    check_command: "check_nrpe!check_root"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
+
+load_check:
+  - service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
+
+memory_check:
+  - service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
 
 nrpe_commands:
-  - command_name:
-    plugin_name:
-    plugin_params:
-  - command_name:
-    plugin_name:
-    plugin_params:
+  - command_name: check_apache
+    plugin_name: check_procs
+    plugin_params: "-C httpd -c 1:"
+  - command_name: check_mysql
+    plugin_name: check_procs
+    plugin_params: "-C mysqld -c 1:"
+  - command_name: check_jabber
+    plugin_name: check_procs
+    plugin_params: "--ereg-argument-array=.*openfire.* -c 1:"
+  - command_name: check_root
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_load
+    plugin_name: check_load
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
+
+contacts:
+  - contact_name: nobody
+    contactgroups: noone
+    host_notifications_enabled: 0
+    service_notifications_enabled: 0
+    host_notification_period: none
+    service_notification_period: none
+    host_notification_options: n
+    service_notification_options: n
+    host_notification_commands: notify-host-by-email
+    service_notification_commands: notify-service-by-email

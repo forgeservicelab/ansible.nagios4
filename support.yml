@@ -20,9 +20,21 @@
 - name: Upload service fragments
   template:
     src=templates/service.cfg.j2
-    dest=/tmp/host/svc-{{ item.check_command }}
+    dest=/tmp/host/svc-{{ item.check_command.replace('!','_') }}
   with_items:
     - "{{ apache_service }}"
+    - "{{ mysql_service }}"
+    - "{{ xmpp_service }}"
+    - "{{ root_check }}"
+    - "{{ load_check }}"
+    - "{{ memory_check }}"
+
+- name: Upload contact fragments
+  template:
+    src=templates/contact.cfg.j2
+    dest=/tmp/host/cnt-{{ item.contact_name.replace(' ','') }}
+  with_items:
+    - "{{ contacts }}"
 
 - name: Compose host monitoring configuration
   assemble:

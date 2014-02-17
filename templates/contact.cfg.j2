@@ -6,7 +6,9 @@ define contact {
 	'host_notification_period',
 	'service_notification_period',
 	'host_notification_options',
-	'service_notification_options' ] %}
+	'service_notification_options',
+	'host_notification_commands',
+	'service_notification_commands' ] %}
   {{ option }}			{{ item[option] }}
 {% endfor %}
 {% for option in [

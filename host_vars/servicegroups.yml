@@ -7,3 +7,6 @@ servicegroups:
   - servicegroup_name: Availability
     servicegroup_alias: Service Internal Availability Checks
     notes: This group holds the checks to verify internally on the monitored host that the offered services are running.
+
+  - servicegroup_name: Internals
+    servicegroup_alias: CPU / MEM / DISK checks
