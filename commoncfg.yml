@@ -1,0 +1,48 @@
+---
+- name: Create clean directory for Service Group fragments
+  file:
+    path=/tmp/svcg
+    state="{{ item }}"
+  with_items:
+    - absent
+    - directory
+
+- name: Create Service groups fragments
+  template:
+    src=templates/servicegroups.cfg.j2
+    dest="/tmp/svcg/svcg-{{ item.servicegroup_name }}"
+  with_items:
+    - "{{ servicegroups }}"
+
+- name: Compose Service Groups configuration
+  assemble:
+    src=/tmp/svcg
+    dest=/usr/local/nagios/etc/objects-extra/00-ServiceGroups.cfg
+    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
+    owner=nagios
+    group=nagios
+    mode=0664
+
+- name: Create clean directory for Command fragments
+  file:
+    path=/tmp/cmd
+    state="{{ item }}"
+  with_items:
+    - absent
+    - directory
+
+- name: Create Command fragments
+  template:
+    src=templates/command.cfg.j2
+    dest="/tmp/cmd/cmd-{{ item.command_name }}"
+  with_items:
+    - "{{ commands }}"
+
+- name: Compose Commands configuration
+  assemble:
+    src=/tmp/cmd
+    dest=/usr/local/nagios/etc/objects-extra/01-Commands.cfg
+    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
+    owner=nagios
+    group=nagios
+    mode=0664

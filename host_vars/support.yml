@@ -23,3 +23,11 @@ apache_service:
     contact_groups: admins
     is_volatile: 0
     obsess: 1
+
+nrpe_commands:
+  - command_name:
+    plugin_name:
+    plugin_params:
+  - command_name:
+    plugin_name:
+    plugin_params:

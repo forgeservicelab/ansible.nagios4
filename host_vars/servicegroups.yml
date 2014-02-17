@@ -1,0 +1,9 @@
+---
+servicegroups:
+  - servicegroup_name: Connectivity
+    servicegroup_alias: Service Connectivity Checks
+    notes: This group holds the checks to verify connectivity to services from outside the monitored host itself.
+
+  - servicegroup_name: Availability
+    servicegroup_alias: Service Internal Availability Checks
+    notes: This group holds the checks to verify internally on the monitored host that the offered services are running.

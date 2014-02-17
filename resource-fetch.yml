@@ -3,7 +3,7 @@
   sudo: False
   connection: local
   vars_files:
-    - vars/versions.yml
+    - host_vars/versions.yml
 
   tasks:
   - name: get roles from gitlab

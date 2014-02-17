@@ -1,0 +1,68 @@
+---
+- hosts: nagios-core
+  sudo: True
+  tags:
+    - core_config
+  vars_files:
+    - host_vars/servicegroups.yml
+    - host_vars/commands.yml
+  tasks:
+    - name: Create clean directory for Service Group fragments
+      include: commoncfg.yml
+
+    - set_fact:
+        remote_hostname: Support
+    - name: Set up Support monitoring
+      include: support.yml
+
+    - set_fact:
+        remote_hostname: Auth
+    - name: Set up Auth monitoring
+      include: auth.yml
+
+    - set_fact:
+        remote_hostname: Git
+    - name: Set up Git monitoring
+      include: git.yml
+
+- hosts: Support
+  sudo: True
+  tags:
+    - support_nrpe
+  vars_files:
+    - host_vars/support.yml
+  tasks:
+    - name: Prepare nrpe local configuration
+      lineinfile:
+        dest=/usr/local/nagios/etc/nrpe_local.cfg
+        line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
+      with_items:
+        - "{{ nrpe_commands }}"
+
+- hosts: Auth
+  sudo: True
+  tags:
+    - auth_nrpe
+  vars_files:
+    - host_vars/auth.yml
+  tasks:
+    - name: Prepare nrpe local configuration
+      lineinfile:
+        dest=/usr/local/nagios/etc/nrpe_local.cfg
+        line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
+      with_items:
+        - "{{ nrpe_commands }}"
+
+- hosts: Git
+  sudo: True
+  tags:
+    - git_nrpe
+  vars_files:
+    - host_vars/git.yml
+  tasks:
+    - name: Prepare nrpe local configuration
+      lineinfile:
+        dest=/usr/local/nagios/etc/nrpe_local.cfg
+        line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
+      with_items:
+        - "{{ nrpe_commands }}"

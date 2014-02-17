@@ -1,0 +1,28 @@
+---
+host:
+  - remote_ip: 
+    alias: Forge ServiceLab Auth
+    max_check_attempts: 3
+    check_period: 24x7
+    contacts:
+    contact_groups:
+    notification_interval: 0
+    notification_period: 24x7
+    display_name: Auth Machine
+
+named_service:
+  - service_description:
+    check_command:
+    max_check_attempts:
+    check_interval:
+    retry_interval:
+    check_period:
+    notification_interval:
+    notification_period:
+    contacts:
+    contact_groups:
+
+nrpe_commands:
+  - command_name:
+    plugin_name:
+    plugin_params:
