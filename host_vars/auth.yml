@@ -1,28 +1,133 @@
 ---
 host:
-  - remote_ip: 
+  - address: 193.166.24.125
     alias: Forge ServiceLab Auth
     max_check_attempts: 3
     check_period: 24x7
-    contacts:
-    contact_groups:
+    contacts: nobody
+    contact_groups: noone
     notification_interval: 0
     notification_period: 24x7
     display_name: Auth Machine
 
-named_service:
-  - service_description:
-    check_command:
-    max_check_attempts:
-    check_interval:
-    retry_interval:
-    check_period:
-    notification_interval:
-    notification_period:
-    contacts:
-    contact_groups:
+services:
+# apache_service
+  - id: 0
+    service_description: "NRPE apache service check"
+    check_command: "check_nrpe!check_apache"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Availability
+
+# ldap_service
+  - id: 1
+    service_description: "NRPE ldap service check"
+    check_command: "check_nrpe!check_ldap"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Availability
+
+# apache_check
+  - id: 2
+    service_description: "Auth webserver connectivity check"
+    check_command: "check_https!auth.forgeservicelab.fi!5!10!-u /login -k 'Accept: text/html' -e 200 -d 'Set-Cookie: _CASinoApp' -s 'FORGE Single Sign-On'"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Connectivity
+
+# cas_check
+  - id: 3
+    service_description: "CAS Authentication check"
+    check_command: "check_cas!auth.forgeservicelab.fi!5!10!-S -u /login -s 'You are currently logged in' -l username -P password -S"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Connectivity
+
+# root_check
+  - id: 4
+    service_description: "NRPE root disk usage check"
+    check_command: "check_nrpe!check_root"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
+
+# load_check
+  - id: 5
+    service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
+
+# memory_check
+  - id: 6
+    service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
 
 nrpe_commands:
-  - command_name:
-    plugin_name:
-    plugin_params:
+  - command_name: check_root
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_load
+    plugin_name: check_load
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
+  - command_name: check_apache
+    plugin_name: check_procs
+    plugin_params: "-C httpd -c 1:"
+  - command_name: check_ldap
+    plugin_name: check_procs
+    plugin_params: "-C slapd -c 1:"
+
+commands:
+  - command_name: check_cas
+    command_line: '$USER1$/check_cas -H $ARG1$ -w $ARG2$ -c $ARG3$ $ARG4$'
+
+contacts:

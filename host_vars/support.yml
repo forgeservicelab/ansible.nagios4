@@ -10,8 +10,10 @@ host:
     notification_period: 24x7
     display_name: Support Machine
 
-apache_service:
-  - service_description: "NRPE apache service check"
+services:
+# apache_service
+  - id: 0
+    service_description: "NRPE apache service check"
     check_command: "check_nrpe!check_apache"
     max_check_attempts: 3
     check_interval: 5
@@ -23,8 +25,9 @@ apache_service:
     contact_groups: admins
     servicegroups: Availability
 
-mysql_service:
-  - service_description: "NRPE mysql service check"
+# mysql_service
+  - id: 1
+    service_description: "NRPE mysql service check"
     check_command: "check_nrpe!check_mysql"
     max_check_attempts: 3
     check_interval: 5
@@ -36,8 +39,9 @@ mysql_service:
     contact_groups: admins
     servicegroups: Availability
 
-xmpp_service:
-  - service_description: "NRPE jabber service check"
+# xmpp_service
+  - id: 2
+    service_description: "NRPE jabber service check"
     check_command: "check_nrpe!check_jabber"
     max_check_attempts: 3
     check_interval: 5
@@ -49,8 +53,51 @@ xmpp_service:
     contact_groups: admins
     servicegroups: Availability
 
-root_check:
-  - service_description: "NRPE root disk usage check"
+# redmine_check
+  - id: 7
+    service_description: "Redmine application connectivity check"
+    check_command: 'check_https!support.forgeservicelab.fi!5!10!-u /redmine -d redmine/login -e 302'
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Connectivity
+
+# password_check
+  - id: 8
+    service_description: "Password recovery application connectivity check"
+    check_command: 'check_https!support.forgeservicelab.fi!5!10!-u /password/ -e 200'
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Connectivity
+
+# xmpp_check
+  - id: 3
+    service_description: "Jabber connectivity check"
+    check_command: 'check_jabber!xmpp.forgeservicelab.fi!5222!xmlns:stream=\"http://etherx.jabber.org/streams\"\ xmlns=\"jabber:client\"\ from=\"xmpp.forgeservicelab.fi\"'
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Connectivity
+
+# root_check
+  - id: 4
+    service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
     max_check_attempts: 3
     check_interval: 5
@@ -62,8 +109,9 @@ root_check:
     contact_groups: admins
     servicegroups: Internals
 
-load_check:
-  - service_description: "NRPE CPU usage check"
+# load_check
+  - id: 5
+    service_description: "NRPE CPU usage check"
     check_command: "check_nrpe!check_load"
     max_check_attempts: 3
     check_interval: 5
@@ -75,8 +123,9 @@ load_check:
     contact_groups: admins
     servicegroups: Internals
 
-memory_check:
-  - service_description: "NRPE RAM usage check"
+# memory_check
+  - id: 6
+    service_description: "NRPE RAM usage check"
     check_command: "check_nrpe!check_memory"
     max_check_attempts: 3
     check_interval: 5
@@ -108,14 +157,19 @@ nrpe_commands:
     plugin_name: check_mem
     plugin_params: "-f -w 30 -c 10 -C"
 
+commands:
+  - command_name: check_jabber
+    command_line: '$USER1$/check_jabber -H $ARG1$ -p $ARG2$ -e $ARG3$'
+
+# Contact definitions for Support host only:
 contacts:
-  - contact_name: nobody
-    contactgroups: noone
-    host_notifications_enabled: 0
-    service_notifications_enabled: 0
-    host_notification_period: none
-    service_notification_period: none
-    host_notification_options: n
-    service_notification_options: n
-    host_notification_commands: notify-host-by-email
-    service_notification_commands: notify-service-by-email
+#  - contact_name: nobody
+#    contactgroups: noone
+#    host_notifications_enabled: 0
+#    service_notifications_enabled: 0
+#    host_notification_period: none
+#    service_notification_period: none
+#    host_notification_options: n
+#    service_notification_options: n
+#    host_notification_commands: notify-host-by-email
+#    service_notification_commands: notify-service-by-email

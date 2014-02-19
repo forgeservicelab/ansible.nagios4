@@ -8,8 +8,7 @@
     - host_vars/contactgroups.yml
     - host_vars/commands.yml
   tasks:
-    - name: Create clean directory for Service Group fragments
-      include: commoncfg.yml
+    - include: commoncfg.yml
 
     - set_fact:
         remote_hostname: Support
@@ -36,7 +35,13 @@
     - name: Prepare nrpe local configuration
       lineinfile:
         dest=/usr/local/nagios/etc/nrpe_local.cfg
+        create=yes
+        state=present
+        regexp="^command[{{ item.command_name }}]"
         line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
+        owner=nagios
+        group=nagios
+        mode=0664
       with_items:
         - "{{ nrpe_commands }}"
 
@@ -50,7 +55,13 @@
     - name: Prepare nrpe local configuration
       lineinfile:
         dest=/usr/local/nagios/etc/nrpe_local.cfg
+        create=yes
+        state=present
+        regexp="^command[{{ item.command_name }}]"
         line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
+        owner=nagios
+        group=nagios
+        mode=0664
       with_items:
         - "{{ nrpe_commands }}"
 
@@ -64,6 +75,12 @@
     - name: Prepare nrpe local configuration
       lineinfile:
         dest=/usr/local/nagios/etc/nrpe_local.cfg
+        create=yes
+        state=present
+        regexp="^command[{{ item.command_name }}]"
         line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
+        owner=nagios
+        group=nagios
+        mode=0664
       with_items:
         - "{{ nrpe_commands }}"

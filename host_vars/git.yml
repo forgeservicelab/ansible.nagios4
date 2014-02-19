@@ -1,28 +1,134 @@
 ---
 host:
-  - remote_ip:
+  - address: 193.166.24.124
     alias: Forge ServiceLab Git
     max_check_attempts: 3
     check_period: 24x7
-    contacts:
-    contact_groups:
+    contacts: nobody
+    contact_groups: noone
     notification_interval: 0
     notification_period: 24x7
-    display_name: Auth Machine
+    display_name: GitLab Machine
 
-named_service:
-  - service_description:
-    check_command:
-    max_check_attempts:
-    check_interval:
-    retry_interval:
-    check_period:
-    notification_interval:
-    notification_period:
-    contacts:
-    contact_groups:
+services:
+# nginx_service
+  - id: 0
+    service_description: "NRPE nginx service check"
+    check_command: "check_nrpe!check_nginx"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Availability
+
+# unicorn_service
+  - id: 1
+    service_description: "NRPE unicorn service check"
+    check_command: "check_nrpe!check_unicorn"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Availability
+
+# sidekiq_service
+  - id: 2
+    service_description: "NRPE sidekiq service check"
+    check_command: "check_nrpe!check_sidekiq"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Availability
+
+# gitlab_check
+  - id: 3
+    service_description: "Gitlab connectivity check"
+    check_command: 'check_https!git.forgeservicelab.fi!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Public Projects"'
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nobody
+    contact_groups: noone
+    servicegroups: Connectivity
+
+# root_check
+  - id: 4
+    service_description: "NRPE root disk usage check"
+    check_command: "check_nrpe!check_root"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
+
+# load_check
+  - id: 5
+    service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
+
+# memory_check
+  - id: 6
+    service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    max_check_attempts: 3
+    check_interval: 5
+    retry_interval: 1
+    check_period: 24x7
+    notification_interval: 0
+    notification_period: 24x7
+    contacts: nagiosadmin
+    contact_groups: admins
+    servicegroups: Internals
 
 nrpe_commands:
-  - command_name:
-    plugin_name:
-    plugin_params:
+  - command_name: check_root
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_load
+    plugin_name: check_load
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
+  - command_name: check_nginx
+    plugin_name: check_procs
+    plugin_params: "-C nignx -c 1:"
+  - command_name: check_unicorn
+    plugin_name: check_procs
+    plugin_params: "-C unicorn_rails -c 1:"
+  - command_name: check_sidekiq
+    plugin_name: check_procs
+    plugin_params: "-C sidekiq -c 1:"
+
+commands:
+
+contacts:

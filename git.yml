@@ -2,33 +2,4 @@
 - name: Load host definitions
   include_vars: host_vars/git.yml
 
-- name: Wipe temporary directory for template fragments
-  file:
-    path=/tmp/host
-    state={{ item }}
-  with_items:
-    - absent
-    - directory
-
-- name: Upload Support host fragment
-  template:
-    src=templates/host.cfg.j2
-    dest=/tmp/host/host
-  with_items:
-    - "{{ host }}"
-
-- name: Upload service fragments
-  template:
-    src=templates/service.cfg.j2
-    dest=/tmp/host/svc-{{ item.check_command }}
-  with_items:
-    - "{{ apache_service }}"
-
-- name: Compose host monitoring configuration
-  assemble:
-    src=/tmp/host
-    dest="/usr/local/nagios/etc/objects-extra/Host-{{ remote_hostname }}.cfg"
-    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
-    owner=nagios
-    group=nagios
-    mode=0664
+- include: varconfig.yml

@@ -62,6 +62,13 @@
   with_items:
     - "{{ contactgroups }}"
 
+- name: Create Common Contacts fragments
+  template:
+    src=templates/contact.cfg.j2
+    dest="/tmp/cntg/cntg-{{ item.contact_name }}"
+  with_items:
+    - "{{ contacts }}"
+
 - name: Compose Contact Groups configuration
   assemble:
     src=/tmp/cntg
