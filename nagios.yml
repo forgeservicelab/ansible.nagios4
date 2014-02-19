@@ -1,3 +1,4 @@
 ---
+- include: resource-fetch.yml
 - include: setup.yml
 - include: config.yml
