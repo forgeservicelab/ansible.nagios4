@@ -4,4 +4,6 @@
 core1 ansible_ssh_host=<your.ip.address.here> ansible_ssh_user=<remote_username>
 
 [nagios-remotes]
-core2 ansible_ssh_host=<your.ip.address.here> ansible_ssh_user=<remote_username>
+Auth ansible_ssh_host=<your.ip.address.here> ansible_ssh_user=<remote_username>
+Git ansible_ssh_host=<your.ip.address.here> ansible_ssh_user=<remote_username>
+Support ansible_ssh_host=<your.ip.address.here> ansible_ssh_user=<remote_username>
