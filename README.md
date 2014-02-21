@@ -17,8 +17,8 @@ This playbook is intended to be checked out from git and uses git submodules to 
 
 The preferred way to get this playbook is using ansible itself:
 
-    > $ echo '127.0.0.1' > inventory
-    > $ ansible 127.0.0.1 -i inventory -m git -a "repo=https://git.forgeservicelab.fi/ansible/nagios4.git dest=nagios4" --connection=local
+    $ echo '127.0.0.1' > inventory
+    $ ansible 127.0.0.1 -i inventory -m git -a "repo=https://git.forgeservicelab.fi/ansible/nagios4.git dest=nagios4" --connection=local
 
 This will clone the git repository and all its nested submodules.
 
