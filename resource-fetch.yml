@@ -9,19 +9,19 @@
   - name: get nagios core 
     shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nagios-{{ nagios_version }}.tar.gz 
       chdir=roles/nagios4/files
-      creates=roles/nagios4/files/nagios-{{ nagios_version }}.tar.gz
+      creates=nagios-{{ nagios_version }}.tar.gz
 
   - name: get nagios plugins
     shell: wget https://www.nagios-plugins.org/download/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
       chdir=roles/nagios4/files
-      creates=roles/nagios4/files/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
+      creates=nagios-plugins-{{ nagios_plugins_version }}.tar.gz
 
   - name: get nrpe
     shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nrpe-{{ nrpe_version }}.tar.gz
       chdir=roles/nagios4/files
-      creates=roles/nagios4/files/nrpe-{{ nrpe_version }}.tar.gz
+      creates=nrpe-{{ nrpe_version }}.tar.gz
 
   - name: get nagiosgraph
-    shell: wget 'http://downloads.sourceforge.net/project/nagiosgraph/nagiosgraph/{{ nagiosgraph_version }}/nagiosgraph-{{ nagiosgraph_version }}.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fnagiosgraph%2Ffiles%2Fnagiosgraph%2F&use_mirror=optimate' -O nagiosgraph-{{ nagiosgraph_version }}.tar.gz
+    shell: wget http://optimate.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/{{ nagiosgraph_version }}/nagiosgraph-{{ nagiosgraph_version }}.tar.gz
       chdir=roles/nagios4/files
-      creates=roles/nagios4/files/nagiosgraph-{{ nagiosgraph_version }}.tar.gz
+      creates=nagiosgraph-{{ nagiosgraph_version }}.tar.gz
