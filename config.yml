@@ -5,6 +5,7 @@
     - core_config
   vars_files:
     - host_vars/servicegroups.yml
+    - host_vars/hostgroups.yml
     - host_vars/contactgroups.yml
     - host_vars/commands.yml
   tasks:

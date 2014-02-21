@@ -1,5 +1,7 @@
 define service {
+{% if remote_hostname is defined %}
   host_name		{{ remote_hostname }}
+{% endif %}
 {% for option in [
 	'service_description',
 	'check_command',
@@ -10,10 +12,8 @@ define service {
 	'notification_interval',
 	'notification_period',
 	'contacts',
-	'contact_groups' ] %}
-  {{ option }}		{{ item[option] }}
-{% endfor %}
-{% for option in [
+	'contact_groups',
+	'use',
 	'hostgroup_name',
 	'display_name',
 	'parents',
@@ -24,6 +24,9 @@ define service {
 	'active_checks_enabled',
 	'passive_checks_enabled',
 	'obsess',
+	'name',
+	'register',
+	'action_url',
 	'check_freshness' ] %}
 {% if option in item.keys() %}
   {{ option }}		{{ item[option] }}

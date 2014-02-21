@@ -1,9 +1,23 @@
 define host {
+{% if remote_hostname is defined %}
   host_name		{{ remote_hostname }}
-{% for option in [ 'alias', 'address', 'max_check_attempts', 'check_period', 'contacts', 'contact_groups', 'notification_interval', 'notification_period' ] %}
-  {{ option }}		{{ item[option] }}
-{% endfor %}
-{% for option in [ 'display_name', 'parents', 'hourly_value', 'hostgroups' ] %}
+{% endif %}
+{% for option in [ 
+	'alias',
+	'address',
+	'max_check_attempts',
+	'check_period',
+	'contacts',
+	'contact_groups',
+	'notification_interval',
+	'notification_period',
+	'use',
+	'display_name',
+	'parents',
+	'hourly_value',
+	'name',
+	'register',
+	'hostgroups' ] %}
 {% if option in item.keys() %}
   {{ option }}		{{ item[option] }}
 {% endif %}

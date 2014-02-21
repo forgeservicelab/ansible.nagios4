@@ -1,112 +1,58 @@
 ---
 host:
-  - address: 193.166.24.125
+  - use: nagios_host
+    address: auth.forgeservicelab.fi
     alias: Forge ServiceLab Auth
-    max_check_attempts: 3
-    check_period: 24x7
-    contacts: nobody
-    contact_groups: noone
-    notification_interval: 0
-    notification_period: 24x7
     display_name: Auth Machine
 
 services:
 # apache_service
   - id: 0
+    use: nagios_service
     service_description: "NRPE apache service check"
     check_command: "check_nrpe!check_apache"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Availability
 
 # ldap_service
   - id: 1
+    use: nagios_service
     service_description: "NRPE ldap service check"
     check_command: "check_nrpe!check_ldap"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Availability
 
 # apache_check
   - id: 2
+    use: nagios_service
     service_description: "Auth webserver connectivity check"
     check_command: "check_https!auth.forgeservicelab.fi!5!10!-u /login -k 'Accept: text/html' -e 200 -d 'Set-Cookie: _CASinoApp' -s 'FORGE Single Sign-On'"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Connectivity
 
 # cas_check
   - id: 3
+    use: nagios_service
     service_description: "CAS Authentication check"
-    check_command: "check_cas!auth.forgeservicelab.fi!5!10!-S -u /login -s 'You are currently logged in' -l username -P password -S"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
+    check_command: "check_cas!auth.forgeservicelab.fi!5!10!-S -u /login -s 'You are currently logged in' -l <username> -P <password> -S"
     servicegroups: Connectivity
 
 # root_check
   - id: 4
+    use: nagios_service
     service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nagiosadmin
-    contact_groups: admins
     servicegroups: Internals
 
 # load_check
   - id: 5
+    use: nagios_service
     service_description: "NRPE CPU usage check"
     check_command: "check_nrpe!check_load"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nagiosadmin
-    contact_groups: admins
     servicegroups: Internals
 
 # memory_check
   - id: 6
+    use: nagios_service
     service_description: "NRPE RAM usage check"
     check_command: "check_nrpe!check_memory"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nagiosadmin
-    contact_groups: admins
     servicegroups: Internals
 
 nrpe_commands:

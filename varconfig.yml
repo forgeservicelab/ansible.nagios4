@@ -7,7 +7,7 @@
     - absent
     - directory
 
-- name: Upload Support host fragment
+- name: Upload host fragment
   template:
     src=templates/host.cfg.j2
     dest=/tmp/host/host

@@ -1,112 +1,58 @@
 ---
 host:
-  - address: 193.166.24.124
+  - use: nagios_host
+    address: git.forgeservicelab.fi
     alias: Forge ServiceLab Git
-    max_check_attempts: 3
-    check_period: 24x7
-    contacts: nobody
-    contact_groups: noone
-    notification_interval: 0
-    notification_period: 24x7
     display_name: GitLab Machine
 
 services:
 # nginx_service
   - id: 0
+    use: nagios_service
     service_description: "NRPE nginx service check"
     check_command: "check_nrpe!check_nginx"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Availability
 
 # unicorn_service
   - id: 1
+    use: nagios_service
     service_description: "NRPE unicorn service check"
     check_command: "check_nrpe!check_unicorn"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Availability
 
 # sidekiq_service
   - id: 2
+    use: nagios_service
     service_description: "NRPE sidekiq service check"
     check_command: "check_nrpe!check_sidekiq"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Availability
 
 # gitlab_check
   - id: 3
+    use: nagios_service
     service_description: "Gitlab connectivity check"
     check_command: 'check_https!git.forgeservicelab.fi!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Public Projects"'
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nobody
-    contact_groups: noone
     servicegroups: Connectivity
 
 # root_check
   - id: 4
+    use: nagios_service
     service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nagiosadmin
-    contact_groups: admins
     servicegroups: Internals
 
 # load_check
   - id: 5
+    use: nagios_service
     service_description: "NRPE CPU usage check"
     check_command: "check_nrpe!check_load"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nagiosadmin
-    contact_groups: admins
     servicegroups: Internals
 
 # memory_check
   - id: 6
+    use: nagios_service
     service_description: "NRPE RAM usage check"
     check_command: "check_nrpe!check_memory"
-    max_check_attempts: 3
-    check_interval: 5
-    retry_interval: 1
-    check_period: 24x7
-    notification_interval: 0
-    notification_period: 24x7
-    contacts: nagiosadmin
-    contact_groups: admins
     servicegroups: Internals
 
 nrpe_commands:

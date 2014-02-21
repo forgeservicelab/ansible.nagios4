@@ -20,3 +20,8 @@
     shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nrpe-{{ nrpe_version }}.tar.gz
       chdir=roles/nagios4/files
       creates=roles/nagios4/files/nrpe-{{ nrpe_version }}.tar.gz
+
+  - name: get nagiosgraph
+    shell: wget 'http://downloads.sourceforge.net/project/nagiosgraph/nagiosgraph/{{ nagiosgraph_version }}/nagiosgraph-{{ nagiosgraph_version }}.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fnagiosgraph%2Ffiles%2Fnagiosgraph%2F&use_mirror=optimate' -O nagiosgraph-{{ nagiosgraph_version }}.tar.gz
+      chdir=roles/nagios4/files
+      creates=roles/nagios4/files/nagiosgraph-{{ nagiosgraph_version }}.tar.gz
