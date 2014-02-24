@@ -1,4 +1,25 @@
 ---
+- name: Enable Apache LDAP module
+  shell: a2enmod authnz_ldap
+  notify: restart apache
+
+- name: Set up LDAP authentication
+  replace:
+    dest=/etc/apache2/conf.d/nagios.conf
+    regexp=^(.+)AuthUserFile.*$
+    replace='\1AuthBasicProvider ldap\n\1AuthLDAPURL "ldaps://193.166.24.115:636/ou=people,dc=forgeservicelab,dc=fi?cn"\n\1AuthLDAPBindDN "cn=<ldap_bind_name>,ou=services,dc=forgeservicelab,dc=fi"\n\1AuthLDAPBindPassword "<ldap_password>"\n\1Require ldap-group ou=digile, ou=groups, dc=forgeservicelab, dc=fi'
+
+- name: remove basic auth leftovers
+  replace:
+    dest=/etc/apache2/conf.d/nagios.conf
+    regexp='^(.+)Require valid-user$'
+
+- name: allow access to nagios cgi
+  replace:
+    dest=/usr/local/nagios/etc/cgi.cfg
+    regexp=^(.+)nagiosadmin
+    replace='\1*'
+
 - name: Create clean directory for Contact Group fragments
   file:
     path=/tmp/cntg
