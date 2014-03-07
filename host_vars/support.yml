@@ -32,6 +32,7 @@ services:
     use: nagios_service
     service_description: "Redmine application connectivity check"
     check_command: 'check_https!support.forgeservicelab.fi!5!10!-u /redmine -d redmine/login -e 302'
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
 # password_check
@@ -39,6 +40,7 @@ services:
     use: nagios_service
     service_description: "Password recovery application connectivity check"
     check_command: 'check_https!support.forgeservicelab.fi!5!10!-u /password/ -e 200'
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
 # xmpp_check
@@ -46,6 +48,7 @@ services:
     use: nagios_service
     service_description: "Jabber connectivity check"
     check_command: 'check_jabber!xmpp.forgeservicelab.fi!5222!xmlns:stream=\"http://etherx.jabber.org/streams\"\ xmlns=\"jabber:client\"\ from=\"xmpp.forgeservicelab.fi\"'
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
 # root_check
@@ -53,6 +56,7 @@ services:
     use: nagios_service
     service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
     servicegroups: Internals
 
 # load_check
@@ -60,6 +64,7 @@ services:
     use: nagios_service
     service_description: "NRPE CPU usage check"
     check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
     servicegroups: Internals
 
 # memory_check
@@ -67,6 +72,7 @@ services:
     use: nagios_service
     service_description: "NRPE RAM usage check"
     check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
 nrpe_commands:

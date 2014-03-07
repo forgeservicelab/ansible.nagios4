@@ -1,17 +1,23 @@
 ---
 - name: Enable Apache LDAP module
   shell: a2enmod authnz_ldap
-  notify: restart apache
+
+- name: Disable LDAP server certificate name check
+  lineinfile:
+    dest='/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}.conf'
+    line='LDAPVerifyServerCert Off'
+    insertafter=EOF
+    state=present
 
 - name: Set up LDAP authentication
   replace:
-    dest=/etc/apache2/conf.d/nagios.conf
+    dest='/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf'
     regexp=^(.+)AuthUserFile.*$
-    replace='\1AuthBasicProvider ldap\n\1AuthLDAPURL "ldaps://193.166.24.115:636/ou=people,dc=forgeservicelab,dc=fi?cn"\n\1AuthLDAPBindDN "cn=<ldap_bind_name>,ou=services,dc=forgeservicelab,dc=fi"\n\1AuthLDAPBindPassword "<ldap_password>"\n\1Require ldap-group ou=digile, ou=groups, dc=forgeservicelab, dc=fi'
+    replace='{{ ldap_auth_string }}'
 
 - name: remove basic auth leftovers
   replace:
-    dest=/etc/apache2/conf.d/nagios.conf
+    dest="/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf"
     regexp='^(.+)Require valid-user$'
 
 - name: allow access to nagios cgi
@@ -19,6 +25,26 @@
     dest=/usr/local/nagios/etc/cgi.cfg
     regexp=^(.+)nagiosadmin
     replace='\1*'
+
+#- name: Add graph mouseovers to localhost
+#  replace:
+#    dest=/usr/local/nagios/etc/objects/localhost.cfg
+#    regexp='(define service{)(?!\n\s*?action)'
+#    replace="\1\n\taction_url\t\t/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$"
+
+- name: Change localhost notification period to 24x7
+  replace:
+    dest=/usr/local/nagios/etc/objects/localhost.cfg
+    regexp='(define host{)(?!\n\s*?notification)'
+    replace='\1\n\tnotification_period\t24x7'
+
+- name: Add IPv4 flag to check-host-alive command
+  lineinfile:
+    dest=/usr/local/nagios/etc/objects/commands.cfg
+    regexp='(.+)(check_ping)(.+)(3000)(.+)'
+    backrefs=yes
+    line='\1\2\3\4\5 -4'
+    state=present
 
 - name: Create clean directory for Contact Group fragments
   file:
@@ -116,6 +142,14 @@
     owner=nagios
     group=nagios
     mode=0664
+
+- name: Upload custom notification script for redmine
+  template:
+    src=templates/redmine_bugs.j2
+    dest=/usr/local/nagios/libexec/redmine_bugs
+    owner=nagios
+    group=nagios
+    mode=0755
 
 - name: Create clean directory for Command fragments
   file:

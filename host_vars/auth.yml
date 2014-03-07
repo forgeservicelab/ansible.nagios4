@@ -25,13 +25,15 @@ services:
     use: nagios_service
     service_description: "Auth webserver connectivity check"
     check_command: "check_https!auth.forgeservicelab.fi!5!10!-u /login -k 'Accept: text/html' -e 200 -d 'Set-Cookie: _CASinoApp' -s 'FORGE Single Sign-On'"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
 # cas_check
   - id: 3
     use: nagios_service
     service_description: "CAS Authentication check"
-    check_command: "check_cas!auth.forgeservicelab.fi!5!10!-S -u /login -s 'You are currently logged in' -l <username> -P <password> -S"
+    check_command: "check_cas!auth.forgeservicelab.fi!5!10!-S -u /login -s 'You are currently logged in' -l {{ cas_username }} -P {{ cas_password }} -S"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
 # root_check
@@ -39,6 +41,7 @@ services:
     use: nagios_service
     service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
     servicegroups: Internals
 
 # load_check
@@ -46,6 +49,7 @@ services:
     use: nagios_service
     service_description: "NRPE CPU usage check"
     check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
     servicegroups: Internals
 
 # memory_check
@@ -53,6 +57,7 @@ services:
     use: nagios_service
     service_description: "NRPE RAM usage check"
     check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
 nrpe_commands:

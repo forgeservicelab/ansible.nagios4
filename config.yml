@@ -4,6 +4,7 @@
   tags:
     - core_config
   vars_files:
+    - host_vars/secrets.yml
     - host_vars/servicegroups.yml
     - host_vars/hostgroups.yml
     - host_vars/contactgroups.yml
@@ -85,3 +86,21 @@
         mode=0664
       with_items:
         - "{{ nrpe_commands }}"
+
+- hosts: nagios-remotes
+  sudo: True
+  tags:
+    - remotes
+  tasks:
+    - name: Allow nrpe access to nagios core
+      lineinfile:
+        dest=/usr/local/nagios/etc/nrpe.cfg
+        regexp='^allowed_hosts=.*'
+        backrefs=yes
+        line='allowed_hosts={{ hostvars[item]["ansible_ssh_host"] if hostvars[item]["ansible_ssh_host"] is defined else hostvars[item]["inventory_hostname"] }}'
+        state=present
+      with_items:
+        - "{{ groups['nagios-core'] }}"
+
+    - name: Open the nrpe port on the local firewall
+      shell: "lokkit -p 5666:tcp"

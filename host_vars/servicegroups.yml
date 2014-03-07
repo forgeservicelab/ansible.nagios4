@@ -19,7 +19,6 @@ servicetemplates:
     check_period: 24x7
     notification_interval: 0
     notification_period: 24x7
-    contacts: nobody
+    contacts: redmine
     contact_groups: noone
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$"
     register: 0

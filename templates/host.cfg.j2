@@ -17,6 +17,7 @@ define host {
 	'hourly_value',
 	'name',
 	'register',
+	'check_command',
 	'hostgroups' ] %}
 {% if option in item.keys() %}
   {{ option }}		{{ item[option] }}

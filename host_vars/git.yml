@@ -32,6 +32,7 @@ services:
     use: nagios_service
     service_description: "Gitlab connectivity check"
     check_command: 'check_https!git.forgeservicelab.fi!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Public Projects"'
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
 # root_check
@@ -39,6 +40,7 @@ services:
     use: nagios_service
     service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
     servicegroups: Internals
 
 # load_check
@@ -46,6 +48,7 @@ services:
     use: nagios_service
     service_description: "NRPE CPU usage check"
     check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
     servicegroups: Internals
 
 # memory_check
@@ -53,6 +56,7 @@ services:
     use: nagios_service
     service_description: "NRPE RAM usage check"
     check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
 nrpe_commands:
@@ -67,7 +71,7 @@ nrpe_commands:
     plugin_params: "-f -w 30 -c 10 -C"
   - command_name: check_nginx
     plugin_name: check_procs
-    plugin_params: "-C nignx -c 1:"
+    plugin_params: "-C nginx -c 1:"
   - command_name: check_unicorn
     plugin_name: check_procs
     plugin_params: "-C unicorn_rails -c 1:"

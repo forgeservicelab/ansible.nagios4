@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+
+import sys
+import argparse
+import json
+import urllib2
+import csv
+
+def archive_host_alert(args):
+    bug = { 'issue': { 'project_id': 14, 'tracker_id': 1, 'category_id': 48, 'priority_id': 4 } }
+    bug['issue']['subject'] = "** %s Host Alert: %s is %s **" % (args.notification_type, args.hostname, args.state)
+    bug['issue']['description'] = "***** Nagios *****\n\nNotification Type: %s\nHost: %s\nState: %s\nAddress: %s\nInfo: %s\n\nDate/Time: %s\n" % (args.notification_type, args.hostname, args.state, args.host_address, args.info, args.date)
+
+    headers = { 'Content-type': 'application/json', 'X-Redmine-API-Key': '{{ redmine_api_key }}' }
+    request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues.json', json.dumps(bug), headers)
+    response = json.loads(urllib2.urlopen(request).read())
+    
+    tmpfile = open('/usr/local/nagios/var/redmine.bugs','a')
+    tmpfile.write('%s, %s, %s\n' % (args.hostname, args.state, response['issue']['id']))
+    tmpfile.close()
+
+def archive_service_alert(args):
+    bug = { 'issue': { 'project_id': 14, 'tracker_id': 1, 'category_id': 48 } }
+    bug['issue']['subject'] = "** %s Service Alert: %s/%s is %s **" % (args.notification_type, args.host_alias, args.service, args.state)
+    bug['issue']['description'] = "***** Nagios *****\n\nNotification Type: %s\n\nService: %s\nHost: %s\nAddress: %s\nState: %s\n\nDate/Time: %s\n\nAdditional Info:\n\n%s\n" % (args.notification_type, args.service, args.host_alias, args.host_address, args.state, args.date, args.info)
+    if (args.state == 'CRITICAL'):
+        bug['issue']['priority_id'] = 4
+    elif (args.state == 'WARNING'):
+        bug['issue']['priority_id'] = 2
+    else:
+        bug['issue']['priority_id'] = 1
+
+    headers = { 'Content-type': 'application/json', 'X-Redmine-API-Key': '{{ redmine_api_key }}' }
+    request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues.json', json.dumps(bug), headers)
+    response = json.loads(urllib2.urlopen(request).read())
+
+    tmpfile = open('/usr/local/nagios/var/redmine.bugs','a')
+    tmpfile.write('%s, %s, %s, %s\n' % (args.host_alias, args.service, args.state, response['issue']['id']))
+    tmpfile.close()
+
+def find_open_issues(hostname, service):
+    tmpfile = open('/usr/local/nagios/var/redmine.bugs','r')
+    issues = []
+    lines = tmpfile.readlines()
+    cleanlines = list(lines)
+    tmpfile.close()
+    for line in lines:
+        parts = csv.reader([lines[0]], skipinitialspace=True).next()
+        if (service is None):
+            if (len(parts) == 3 and parts[0] == hostname):
+                issues.append(parts[2])
+                cleanlines.remove(line)
+        else:
+            if (len(parts) == 4 and parts[0] == hostname and parts[1] == service):
+                issues.append(parts[3])
+                cleanlines.remove(line)
+
+    tmpfile = open('/usr/local/nagios/var/redmine.bugs','w')
+    tmpfile.writelines(cleanlines)
+    tmpfile.close()
+    return issues
+
+def clear_alert(hostname, service):
+    data = { 'issue': { 'status_id': 5 } }
+    if service is None:
+        data['issue']['notes'] = 'Host recovered'
+    else:
+        data['issue']['notes'] = 'Service recovered'
+    headers = { 'Content-type': 'application/json', 'X-Redmine-API-Key': '{{ redmine_api_key }}' }
+    opener = urllib2.build_opener(urllib2.HTTPHandler)
+    for issue in find_open_issues(hostname, service):
+        request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues/%s.json' % issue, json.dumps(data), headers)
+        request.get_method = lambda: 'PUT'
+        opener.open(request)
+
+
+def process_host(args):
+    if (args.state == 'DOWN'):
+        archive_host_alert(args)
+    else:
+        clear_alert(args.hostname, None)
+
+def process_service(args):
+    if not (args.state == 'OK'):
+        archive_service_alert(args)
+    else:
+        clear_alert(args.host_alias, args.service)
+
+if __name__ == '__main__':
+    PARSER = argparse.ArgumentParser()
+
+    PARSER.add_argument('-n', '--notification_type')
+    PARSER.add_argument('-H', '--hostname')
+    PARSER.add_argument('-S', '--service')
+    PARSER.add_argument('-a', '--host_alias')
+    PARSER.add_argument('-u', '--host_address')
+    PARSER.add_argument('-s', '--state') 
+    PARSER.add_argument('-i', '--info')
+    PARSER.add_argument('-d', '--date')
+
+    ARGUMENTS = PARSER.parse_args()
+
+    if not (ARGUMENTS.service):
+        process_host(ARGUMENTS)
+    else:
+        process_service(ARGUMENTS)
+
+    if (len(sys.argv) == 1):
+        print sys.argv[0] + ':  Could not parse arguments'
+        exit(-1)
