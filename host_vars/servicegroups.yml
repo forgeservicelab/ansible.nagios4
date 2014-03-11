@@ -20,5 +20,4 @@ servicetemplates:
     notification_interval: 0
     notification_period: 24x7
     contacts: redmine
-    contact_groups: noone
     register: 0
