@@ -27,12 +27,12 @@
     - name: Set up Git monitoring
       include: git.yml
 
-- hosts: Support
+- hosts: nagios-remotes
   sudo: True
   tags:
-    - support_nrpe
+    - remotes 
   vars_files:
-    - host_vars/support.yml
+    - host_vars/{{ inventory_hostname }}.yml
   handlers:
     - include: handlers.yml
   tasks:
@@ -51,59 +51,6 @@
       notify:
         - restart nrpe
 
-- hosts: Auth
-  sudo: True
-  tags:
-    - auth_nrpe
-  vars_files:
-    - host_vars/auth.yml
-  handlers:
-    - include: handlers.yml
-  tasks:
-    - name: Prepare nrpe local configuration
-      lineinfile:
-        dest=/usr/local/nagios/etc/nrpe_local.cfg
-        create=yes
-        state=present
-        regexp="^command\[{{ item.command_name }}\].*"
-        line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
-        owner=nagios
-        group=nagios
-        mode=0664
-      with_items:
-        - "{{ nrpe_commands }}"
-      notify: restart nrpe
-
-- hosts: Git
-  sudo: True
-  tags:
-    - git_nrpe
-  vars_files:
-    - host_vars/git.yml
-  handlers:
-    - include: handlers.yml
-  tasks:
-    - name: Prepare nrpe local configuration
-      lineinfile:
-        dest=/usr/local/nagios/etc/nrpe_local.cfg
-        create=yes
-        state=present
-        regexp="^command\[{{ item.command_name }}\].*"
-        line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
-        owner=nagios
-        group=nagios
-        mode=0664
-      with_items:
-        - "{{ nrpe_commands }}"
-      notify: restart nrpe
-
-- hosts: nagios-remotes
-  sudo: True
-  tags:
-    - remotes
-  handlers:
-    - include: handlers.yml
-  tasks:
     - name: Allow nrpe access to nagios core
       lineinfile:
         dest=/usr/local/nagios/etc/nrpe.cfg
