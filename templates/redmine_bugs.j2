@@ -22,7 +22,20 @@ def archive_host_alert(args):
 def archive_service_alert(args):
     bug = { 'issue': { 'project_id': 14, 'tracker_id': 1, 'category_id': 48 } }
     bug['issue']['subject'] = "** %s Service Alert: %s/%s is %s **" % (args.notification_type, args.host_alias, args.service, args.state)
-    bug['issue']['description'] = "***** Nagios *****\n\nNotification Type: %s\n\nService: %s\nHost: %s\nAddress: %s\nState: %s\n\nDate/Time: %s\n\nAdditional Info:\n\n%s\n" % (args.notification_type, args.service, args.host_alias, args.host_address, args.state, args.date, args.info)
+    bug['issue']['description'] = "***** Nagios *****\n\nNotification Type: %s\n\nService: %s\nHost: %s\nAddress: %s\nState: %s\n\nDate/Time: %s\n\nAdditional Info:\n\n" % (args.notification_type, args.service, args.host_alias, args.host_address, args.state, args.date)
+
+    infolines = args.info.split(r'\n')
+    bug['issue']['description'] += infolines[0] + '\n\n'
+    if len(infolines[1:]):
+        for item in infolines[1].split():
+            bug['issue']['description'] += '| %s ' % item
+        bug['issue']['description'] += '|\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n'
+        for line in infolines[2:]:
+            if len(line.split()):
+                for item in line.split():
+                    bug['issue']['description'] += '| %s ' % item
+                bug['issue']['description'] += '|\n'
+
     if (args.state == 'CRITICAL'):
         bug['issue']['priority_id'] = 4
     elif (args.state == 'WARNING'):

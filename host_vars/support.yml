@@ -89,7 +89,7 @@ nrpe_commands:
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /"
   - command_name: check_load
-    plugin_name: check_load
+    plugin_name: check_load_extra
     plugin_params: "-w 1,1,1 -c 2,2,2 -r"
   - command_name: check_memory
     plugin_name: check_mem
