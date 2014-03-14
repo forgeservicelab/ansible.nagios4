@@ -1,7 +1,7 @@
 ---
 host:
   - use: nagios_host
-    address: "{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}"
+    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Forge ServiceLab Auth
     display_name: Auth Machine
 
@@ -24,7 +24,7 @@ services:
   - id: 2
     use: nagios_service
     service_description: "Auth webserver connectivity check"
-    check_command: "check_https!{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}!5!10!-u /login -k 'Accept: text/html' -e 200 -d 'Set-Cookie: _CASinoApp' -s 'FORGE Single Sign-On'"
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /login -k 'Accept: text/html' -e 200 -d 'Set-Cookie: _CASinoApp' -s 'FORGE Single Sign-On'"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
@@ -32,7 +32,7 @@ services:
   - id: 3
     use: nagios_service
     service_description: "CAS Authentication check"
-    check_command: "check_cas!{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}!5!10!-S -u /login -s 'You are currently logged in' -l {{ cas_username }} -P {{ cas_password }} -S"
+    check_command: "check_cas!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-S -u /login -s 'You are currently logged in' -l {{ cas_username }} -P {{ cas_password }} -S"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 

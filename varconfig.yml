@@ -42,7 +42,7 @@
 - name: Compose host monitoring configuration
   assemble:
     src=/tmp/host
-    dest="/usr/local/nagios/etc/objects-extra/Host-{{ inventory_hostname }}.cfg"
+    dest="/usr/local/nagios/etc/objects-extra/Host-{{ target_inventory_hostname }}.cfg"
     delimiter="{{'\n'}}###################################################{{'\n\n'}}"
     owner=nagios
     group=nagios

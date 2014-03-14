@@ -1,7 +1,7 @@
 ---
 host:
   - use: nagios_host
-    address: "{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}"
+    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Forge ServiceLab Support
     display_name: Support Machine
 
@@ -31,7 +31,7 @@ services:
   - id: 7
     use: nagios_service
     service_description: "Redmine application connectivity check"
-    check_command: 'check_https!{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}!5!10!-u /redmine -d redmine/login -e 302'
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /redmine -d redmine/login -e 302"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
@@ -39,7 +39,7 @@ services:
   - id: 8
     use: nagios_service
     service_description: "Password recovery application connectivity check"
-    check_command: 'check_https!{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}!5!10!-u /password/ -e 200'
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /password/ -e 200"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 

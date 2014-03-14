@@ -1,5 +1,7 @@
 define host {
-  host_name		{{ inventory_hostname }}
+{% if target_inventory_hostname is defined %}
+  host_name		{{ hostvars[target_inventory_hostname]['inventory_hostname'] }}
+{% endif %}
 {% for option in [ 
 	'alias',
 	'address',

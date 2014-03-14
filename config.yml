@@ -13,17 +13,17 @@
     - include: commoncfg.yml
 
     - set_fact:
-        remote_hostname: Support
+        target_inventory_hostname: support
     - name: Set up Support monitoring
       include: support.yml
 
     - set_fact:
-        remote_hostname: Auth
+        target_inventory_hostname: auth
     - name: Set up Auth monitoring
       include: auth.yml
 
     - set_fact:
-        remote_hostname: Git
+        target_inventory_hostname: git
     - name: Set up Git monitoring
       include: git.yml
 

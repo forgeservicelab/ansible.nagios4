@@ -1,7 +1,7 @@
 ---
 host:
   - use: nagios_host
-    address: "{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}"
+    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Forge ServiceLab Git
     display_name: GitLab Machine
 
@@ -31,7 +31,7 @@ services:
   - id: 3
     use: nagios_service
     service_description: "Gitlab connectivity check"
-    check_command: 'check_https!{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Public Projects"'
+    check_command: 'check_https!{{ hostvars[target_inventory_hostname]["ansible_ssh_host"] if hostvars[target_inventory_hostname]["ansible_ssh_host"] is defined else hostvars[target_inventory_hostname]["inventory_hostname"] }}!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Public Projects"'
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
