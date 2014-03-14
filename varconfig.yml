@@ -13,7 +13,7 @@
     dest=/tmp/host/host
   with_items:
     - "{{ host }}"
-  when: host
+  when: host != None
 
 - name: Upload service fragments
   template:
@@ -21,7 +21,7 @@
     dest=/tmp/host/svc-{{ item.id }}
   with_items:
     - "{{ services }}"
-  when: services
+  when: services != None
 
 - name: Upload contact fragments
   template:
@@ -29,7 +29,7 @@
     dest=/tmp/host/cnt-{{ item.contact_name.replace(' ','') }}
   with_items:
     - "{{ contacts }}"
-  when: contacts
+  when: contacts != None
 
 - name: Upload command fragments
   template:
@@ -37,7 +37,7 @@
     dest=/tmp/host/cmd-{{ item.command_name }}
   with_items:
     - "{{ commands }}"
-  when: commands
+  when: commands != None
 
 - name: Compose host monitoring configuration
   assemble:

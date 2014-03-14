@@ -1,7 +1,7 @@
 ---
 host:
   - use: nagios_host
-    address: {{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}
+    address: "{{ ansible_ssh_host if ansible_ssh_host is defined else inventory_hostname }}"
     alias: Forge ServiceLab Auth
     display_name: Auth Machine
 
