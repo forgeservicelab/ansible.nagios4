@@ -1,7 +1,5 @@
 define service {
-{% if remote_hostname is defined %}
-  host_name		{{ remote_hostname }}
-{% endif %}
+  host_name		{{ inventory_hostname }}
 {% for option in [
 	'service_description',
 	'check_command',

@@ -21,6 +21,7 @@
     dest=/tmp/host/svc-{{ item.id }}
   with_items:
     - "{{ services }}"
+  when: services
 
 - name: Upload contact fragments
   template:
@@ -41,7 +42,7 @@
 - name: Compose host monitoring configuration
   assemble:
     src=/tmp/host
-    dest="/usr/local/nagios/etc/objects-extra/Host-{{ remote_hostname }}.cfg"
+    dest="/usr/local/nagios/etc/objects-extra/Host-{{ inventory_hostname }}.cfg"
     delimiter="{{'\n'}}###################################################{{'\n\n'}}"
     owner=nagios
     group=nagios

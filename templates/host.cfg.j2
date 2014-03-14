@@ -1,7 +1,5 @@
 define host {
-{% if remote_hostname is defined %}
-  host_name		{{ remote_hostname }}
-{% endif %}
+  host_name		{{ inventory_hostname }}
 {% for option in [ 
 	'alias',
 	'address',
