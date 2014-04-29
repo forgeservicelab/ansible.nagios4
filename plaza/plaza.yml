@@ -1,0 +1,45 @@
+---
+- set_fact:
+    target_inventory_hostname: drupal01
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: drupal02
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: loadbalancer01
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: loadbalancer02
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: mysql01
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: mysql02
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: nfs01
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: nfs02
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: replication_host
+- include:
+    ../common/hostloader.yml

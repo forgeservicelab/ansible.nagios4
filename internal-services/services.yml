@@ -1,0 +1,18 @@
+---
+- set_fact:
+    target_inventory_hostname: support
+- name: Set up Support monitoring
+  include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: auth
+- name: Set up Auth monitoring
+  include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: git
+- name: Set up Git monitoring
+  include:
+    ../common/hostloader.yml

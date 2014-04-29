@@ -1,0 +1,5 @@
+---
+- name: Load host definitions
+  include_vars: ../host_vars/support.yml
+
+- include: ../common/varconfig.yml

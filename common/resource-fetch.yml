@@ -3,25 +3,25 @@
   sudo: False
   connection: local
   vars_files:
-    - host_vars/versions.yml
+    - ../host_vars/versions.yml
 
   tasks:
   - name: get nagios core 
     shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nagios-{{ nagios_version }}.tar.gz 
-      chdir=roles/nagios4/files
+      chdir=../roles/nagios4/files
       creates=nagios-{{ nagios_version }}.tar.gz
 
   - name: get nagios plugins
     shell: wget https://www.nagios-plugins.org/download/nagios-plugins-{{ nagios_plugins_version }}.tar.gz
-      chdir=roles/nagios4/files
+      chdir=../roles/nagios4/files
       creates=nagios-plugins-{{ nagios_plugins_version }}.tar.gz
 
   - name: get nrpe
     shell: wget http://prdownloads.sourceforge.net/sourceforge/nagios/nrpe-{{ nrpe_version }}.tar.gz
-      chdir=roles/nagios4/files
+      chdir=../roles/nagios4/files
       creates=nrpe-{{ nrpe_version }}.tar.gz
 
   - name: get nagiosgraph
     shell: wget http://optimate.dl.sourceforge.net/project/nagiosgraph/nagiosgraph/{{ nagiosgraph_version }}/nagiosgraph-{{ nagiosgraph_version }}.tar.gz
-      chdir=roles/nagios4/files
+      chdir=../roles/nagios4/files
       creates=nagiosgraph-{{ nagiosgraph_version }}.tar.gz

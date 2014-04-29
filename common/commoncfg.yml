@@ -56,14 +56,14 @@
 
 - name: Create Contact Group fragments
   template:
-    src=templates/contactgroups.cfg.j2
+    src=../templates/contactgroups.cfg.j2
     dest="/tmp/cntg/cntg-{{ item.contactgroup_name }}"
   with_items:
     - "{{ contactgroups }}"
 
 - name: Create Common Contacts fragments
   template:
-    src=templates/contact.cfg.j2
+    src=../templates/contact.cfg.j2
     dest="/tmp/cntg/cntg-{{ item.contact_name }}"
   with_items:
     - "{{ contacts }}"
@@ -87,7 +87,7 @@
 
 - name: Create Service Group fragments
   template:
-    src=templates/servicegroups.cfg.j2
+    src=../templates/servicegroups.cfg.j2
     dest="/tmp/svcg/svcg-{{ item.servicegroup_name }}"
   with_items:
     - "{{ servicegroups }}"
@@ -95,7 +95,7 @@
 
 - name: Create Service template
   template:
-    src=templates/service.cfg.j2
+    src=../templates/service.cfg.j2
     dest="/tmp/svcg/svct-{{ item.name }}"
   with_items:
     - "{{ servicetemplates }}"
@@ -120,7 +120,7 @@
 
 - name: Create Host Group fragments
   template:
-    src=templates/hostgroups.cfg.j2
+    src=../templates/hostgroups.cfg.j2
     dest="/tmp/hstg/hstg-{{ item.hostgroup_name }}"
   with_items:
     - "{{ hostgroups }}"
@@ -128,7 +128,7 @@
 
 - name: Create Host template
   template:
-    src=templates/host.cfg.j2
+    src=../templates/host.cfg.j2
     dest="/tmp/hstg/hstt-{{ item.name }}"
   with_items:
     - "{{ hosttemplates }}"
@@ -145,7 +145,7 @@
 
 - name: Upload custom notification script for redmine
   template:
-    src=templates/redmine_bugs.j2
+    src=../templates/redmine_bugs.j2
     dest=/usr/local/nagios/libexec/redmine_bugs
     owner=nagios
     group=nagios
@@ -161,7 +161,7 @@
 
 - name: Create Command fragments
   template:
-    src=templates/command.cfg.j2
+    src=../templates/command.cfg.j2
     dest="/tmp/cmd/cmd-{{ item.command_name }}"
   with_items:
     - "{{ commands }}"

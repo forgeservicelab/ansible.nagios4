@@ -4,35 +4,24 @@
   tags:
     - core_config
   vars_files:
-    - host_vars/secrets.yml
-    - host_vars/servicegroups.yml
-    - host_vars/hostgroups.yml
-    - host_vars/contactgroups.yml
-    - host_vars/commands.yml
+    - ../host_vars/secrets.yml
+    - ../host_vars/servicegroups.yml
+    - ../host_vars/hostgroups.yml
+    - ../host_vars/contactgroups.yml
+    - ../host_vars/commands.yml
   tasks:
     - include: commoncfg.yml
 
-    - set_fact:
-        target_inventory_hostname: support
-    - name: Set up Support monitoring
-      include: support.yml
+    - include: ../internal-services/services.yml
 
-    - set_fact:
-        target_inventory_hostname: auth
-    - name: Set up Auth monitoring
-      include: auth.yml
-
-    - set_fact:
-        target_inventory_hostname: git
-    - name: Set up Git monitoring
-      include: git.yml
+    - include: ../plaza/plaza.yml
 
 - hosts: nagios-remotes
   sudo: True
   tags:
     - remotes 
   vars_files:
-    - host_vars/{{ inventory_hostname }}.yml
+    - ../host_vars/{{ inventory_hostname }}.yml
   handlers:
     - include: handlers.yml
   tasks:

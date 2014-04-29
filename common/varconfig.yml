@@ -9,7 +9,7 @@
 
 - name: Upload host fragment
   template:
-    src=templates/host.cfg.j2
+    src=../templates/host.cfg.j2
     dest=/tmp/host/host
   with_items:
     - "{{ host }}"
@@ -17,7 +17,7 @@
 
 - name: Upload service fragments
   template:
-    src=templates/service.cfg.j2
+    src=../templates/service.cfg.j2
     dest=/tmp/host/svc-{{ item.id }}
   with_items:
     - "{{ services }}"
@@ -25,7 +25,7 @@
 
 - name: Upload contact fragments
   template:
-    src=templates/contact.cfg.j2
+    src=../templates/contact.cfg.j2
     dest=/tmp/host/cnt-{{ item.contact_name.replace(' ','') }}
   with_items:
     - "{{ contacts }}"
@@ -33,7 +33,7 @@
 
 - name: Upload command fragments
   template:
-    src=templates/command.cfg.j2
+    src=../templates/command.cfg.j2
     dest=/tmp/host/cmd-{{ item.command_name }}
   with_items:
     - "{{ commands }}"

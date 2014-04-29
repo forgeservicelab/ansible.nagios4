@@ -1,5 +1,0 @@
----
-- name: Load host definitions
-  include_vars: host_vars/auth.yml
-
-- include: varconfig.yml
