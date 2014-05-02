@@ -1,5 +1,11 @@
 ---
 hostgroups:
+  - hostgroup_name: forge
+    hostgroup_alias: FORGE ServiceLab internal services
+    members: git, auth, support
+  - hostgroup_name: plaza
+    hostgroup_alias: FORGE ServiceLab drupal infrastructure
+    members: drupal01,drupal02,loadbalancer01,loadbalancer02,mysql01,mysql02,nfs01,nfs02,replication_host
 
 hosttemplates:
   - name: nagios_host

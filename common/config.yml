@@ -15,6 +15,11 @@
     - include: ../internal-services/services.yml
 
     - include: ../plaza/plaza.yml
+  handlers:
+    - name: restart apache
+      service:
+        name="{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}"
+        state=restarted
 
 - hosts: nagios-remotes
   sudo: True
@@ -58,3 +63,14 @@
         line='include=/usr/local/nagios/etc/nrpe_local.cfg'
         state=present
       notify: restart nrpe
+
+- hosts: nagios-core
+  sudo: true
+  tasks:
+    - name: Re-enable notifications by default
+      lineinfile:
+        dest=/usr/local/nagios/etc/nagios.cfg
+        regexp="^enable_notifications"
+        line="enable_notifications=1"
+        state=present
+  # Do not bounce the service after this task or notifications will start being sent for recovering services. Enable or bounce via the WebUI.

@@ -5,6 +5,39 @@ import argparse
 import json
 import urllib2
 import csv
+import sleekxmpp
+
+if sys.version_info < (3, 0):
+    from sleekxmpp.util.misc_ops import setdefaultencoding
+    setdefaultencoding('utf8')
+else:
+    raw_input = input
+
+class MUCBot(sleekxmpp.ClientXMPP):
+    def __init__(self, jid, password, room, nick, message):
+        sleekxmpp.ClientXMPP.__init__(self, jid, password)
+        self.room = room
+        self.nick = nick
+        self.msg = message
+        self.add_event_handler("session_start", self.start)
+
+    def start(self, event):
+        self.get_roster()
+        self.send_presence()
+        self.plugin['xep_0045'].joinMUC(self.room, self.nick, wait=True)
+        self.send_message(mto=self.room, mbody=self.msg, mtype='groupchat')
+        self.disconnect(wait=True)
+
+def send_chat_message(message):
+    xmpp = MUCBot('{{ jabber_id }}', '{{ jabber_pwd }}', '{{ jabber_room }}', 'Nagios', message)
+    xmpp.registerPlugin('xep_0030')
+    xmpp.registerPlugin('xep_0045')
+    xmpp.registerPlugin('xep_0199')
+
+    if xmpp.connect():
+        xmpp.process(block=True)
+    else:
+        pass
 
 def archive_host_alert(args):
     bug = { 'issue': { 'project_id': 14, 'tracker_id': 1, 'category_id': 48, 'priority_id': 4 } }
@@ -18,6 +51,8 @@ def archive_host_alert(args):
     tmpfile = open('/usr/local/nagios/var/redmine.bugs','a')
     tmpfile.write('%s, %s, %s\n' % (args.hostname, args.state, response['issue']['id']))
     tmpfile.close()
+
+    send_chat_message(bug['issue']['subject'])
 
 def archive_service_alert(args):
     bug = { 'issue': { 'project_id': 14, 'tracker_id': 1, 'category_id': 48 } }
@@ -51,22 +86,25 @@ def archive_service_alert(args):
     tmpfile.write('%s, %s, %s, %s\n' % (args.host_alias, args.service, args.state, response['issue']['id']))
     tmpfile.close()
 
+    send_chat_message(bug['issue']['subject'])
+
 def find_open_issues(hostname, service):
     tmpfile = open('/usr/local/nagios/var/redmine.bugs','r')
     issues = []
-    lines = tmpfile.readlines()
-    cleanlines = list(lines)
-    tmpfile.close()
-    for line in lines:
-        parts = csv.reader([lines[0]], skipinitialspace=True).next()
+    cleanlines = list(tmpfile.readlines())
+    tmpfile.seek(0)
+
+    csvreader = csv.reader(tmpfile, skipinitialspace=True)
+    for row in csvreader:
         if (service is None):
-            if (len(parts) == 3 and parts[0] == hostname):
-                issues.append(parts[2])
-                cleanlines.remove(line)
+            if (len(row) == 3 and row[0] == hostname):
+                issues.append(row[2])
+                cleanlines.remove(', '.join(row) + '\n')
         else:
-            if (len(parts) == 4 and parts[0] == hostname and parts[1] == service):
-                issues.append(parts[3])
-                cleanlines.remove(line)
+            if (len(row) == 4 and row[0] == hostname and row[1] == service):
+                issues.append(row[3])
+                cleanlines.remove(', '.join(row) + '\n')
+    tmpfile.close()
 
     tmpfile = open('/usr/local/nagios/var/redmine.bugs','w')
     tmpfile.writelines(cleanlines)
@@ -86,6 +124,7 @@ def clear_alert(hostname, service):
         request.get_method = lambda: 'PUT'
         opener.open(request)
 
+        send_chat_message('Issue #%s closed: %s' % (issue, data['issue']['notes']))
 
 def process_host(args):
     if (args.state == 'DOWN'):

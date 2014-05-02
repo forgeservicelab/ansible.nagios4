@@ -25,8 +25,8 @@
 
 - name: Redirect root to /nagios
   lineinfile:
-    dest='/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf'
-    line="{{ item }}
+    dest="/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf"
+    line="{{ item }}"
     insertafter=EOF
   with_items:
     - "RewriteEngine on"
