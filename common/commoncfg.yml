@@ -39,12 +39,6 @@
     regexp=^(.+)nagiosadmin
     replace='\1*'
 
-#- name: Add graph mouseovers to localhost
-#  replace:
-#    dest=/usr/local/nagios/etc/objects/localhost.cfg
-#    regexp='(define service{)(?!\n\s*?action)'
-#    replace="\1\n\taction_url\t\t/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$"
-
 - name: Change localhost notification period to 24x7
   replace:
     dest=/usr/local/nagios/etc/objects/localhost.cfg
