@@ -2,6 +2,7 @@ Nagios 4
 ========
 
 Ansible Playbook to get nagios core version 4 installed from source on a Debian system.
+Requires ansible version >= 1.6
 
 Prerequisites
 -------------
