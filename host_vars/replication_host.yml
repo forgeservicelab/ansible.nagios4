@@ -4,6 +4,7 @@ host:
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Plaza Replication host
     display_name: Replicator
+    hostgroups: plaza
 
 services:
   - id: 0

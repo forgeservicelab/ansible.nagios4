@@ -15,11 +15,12 @@
     - include: ../internal-services/services.yml
 
     - include: ../plaza/plaza.yml
+
   handlers:
     - name: restart apache
       service:
-        name="{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}"
-        state=restarted
+        name: "{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}"
+        state: restarted
 
 - hosts: nagios-remotes
   sudo: True
@@ -32,14 +33,14 @@
   tasks:
     - name: Prepare nrpe local configuration
       lineinfile:
-        dest=/usr/local/nagios/etc/nrpe_local.cfg
-        create=yes
-        state=present
-        regexp="^command\[{{ item.command_name }}\].*"
-        line="command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}"
-        owner=nagios
-        group=nagios
-        mode=0664
+        dest: /usr/local/nagios/etc/nrpe_local.cfg
+        create: yes
+        state: present
+        regexp: ^command\[{{ item.command_name }}\].*
+        line: command[{{ item.command_name }}]=/usr/local/nagios/libexec/{{ item.plugin_name }} {{ item.plugin_params }}
+        owner: nagios
+        group: nagios
+        mode: 0664
       with_items:
         - "{{ nrpe_commands }}"
       notify:
@@ -47,21 +48,21 @@
 
     - name: Allow nrpe access to nagios core
       lineinfile:
-        dest=/usr/local/nagios/etc/nrpe.cfg
-        regexp='^allowed_hosts=.*'
-        backrefs=yes
-        line='allowed_hosts={{ hostvars[item]["ansible_ssh_host"] if hostvars[item]["ansible_ssh_host"] is defined else hostvars[item]["inventory_hostname"] }}'
-        state=present
+        dest: /usr/local/nagios/etc/nrpe.cfg
+        regexp: ^allowed_hosts=.*
+        backrefs: yes
+        line: allowed_hosts={{ hostvars[item]["ansible_ssh_host"] if hostvars[item]["ansible_ssh_host"] is defined else hostvars[item]["inventory_hostname"] }},{{ hostvars[item]["ansible_default_ipv4"]["address"] }}
+        state: present
       with_items:
         - "{{ groups['nagios-core'] }}"
       notify: restart nrpe
 
     - name: Change include statement for nrpe_local to use full path
       lineinfile:
-        dest=/usr/local/nagios/etc/nrpe.cfg
-        regexp="^include="
-        line='include=/usr/local/nagios/etc/nrpe_local.cfg'
-        state=present
+        dest: /usr/local/nagios/etc/nrpe.cfg
+        regexp: ^include=
+        line: include=/usr/local/nagios/etc/nrpe_local.cfg
+        state: present
       notify: restart nrpe
 
 - hosts: nagios-core
@@ -69,8 +70,8 @@
   tasks:
     - name: Re-enable notifications by default
       lineinfile:
-        dest=/usr/local/nagios/etc/nagios.cfg
-        regexp="^enable_notifications"
-        line="enable_notifications=1"
-        state=present
+        dest: /usr/local/nagios/etc/nagios.cfg
+        regexp: ^enable_notifications
+        line: enable_notifications=1
+        state: present
   # Do not bounce the service after this task or notifications will start being sent for recovering services. Enable or bounce via the WebUI.

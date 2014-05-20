@@ -4,6 +4,7 @@ host:
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Forge ServiceLab Auth
     display_name: Auth Machine
+    hostgroups: forge
 
 services:
 # apache_service
@@ -77,8 +78,8 @@ nrpe_commands:
     plugin_name: check_procs
     plugin_params: "-C slapd -c 1:"
 
-commands:
+host_commands:
   - command_name: check_cas
     command_line: '$USER1$/check_cas -H $ARG1$ -w $ARG2$ -c $ARG3$ $ARG4$'
 
-contacts:
+host_contacts:

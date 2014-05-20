@@ -4,6 +4,7 @@ host:
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: "Plaza {{ target_inventory_hostname }}"
     display_name: "Plaza {{ target_inventory_hostname }}"
+    hostgroups: plaza
 
 services:
 # heartbeat_service

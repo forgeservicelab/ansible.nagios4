@@ -4,180 +4,188 @@
 
 - name: Disable LDAP server certificate name check
   lineinfile:
-    dest='/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}.conf'
-    line='LDAPVerifyServerCert Off'
-    insertafter=EOF
-    state=present
+    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}.conf
+    line: LDAPVerifyServerCert Off
+    insertafter: EOF
+    state: present
   notify: restart apache
 
 - name: Set up LDAP authentication
   replace:
-    dest='/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf'
-    regexp=^(.+)AuthUserFile.*$
-    replace='{{ ldap_auth_string }}'
+    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf
+    regexp: ^(.+)AuthUserFile.*$
+    replace: "{{ ldap_auth_string }}"
   notify: restart apache
 
 - name: remove basic auth leftovers
   replace:
-    dest="/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf"
-    regexp='^(.+)Require valid-user$'
+    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf
+    regexp: ^(.+)Require valid-user$
   notify: restart apache
 
 - name: Redirect root to /nagios
   lineinfile:
-    dest="/etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf"
-    line="{{ item }}"
-    insertafter=EOF
+    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf
+    line: "{{ item }}"
+    insertafter: EOF
   with_items:
-    - "RewriteEngine on"
-    - "RedirectMatch 301 ^/$ /nagios/"
+    - RewriteEngine on
+    - RedirectMatch 301 ^/$ /nagios/
   notify: restart apache
 
 - name: allow access to nagios cgi
   replace:
-    dest=/usr/local/nagios/etc/cgi.cfg
-    regexp=^(.+)nagiosadmin
-    replace='\1*'
+    dest: /usr/local/nagios/etc/cgi.cfg
+    regexp: ^(.+)nagiosadmin
+    replace: \1*
 
 - name: Change localhost notification period to 24x7
   replace:
-    dest=/usr/local/nagios/etc/objects/localhost.cfg
-    regexp='(define host{)(?!\n\s*?notification)'
-    replace='\1\n\tnotification_period\t24x7'
+    dest: /usr/local/nagios/etc/objects/localhost.cfg
+    regexp: (define host{)(?!\n\s*?notification)
+    replace: \1\n\tnotification_period\t24x7
 
 - name: Add IPv4 flag to check-host-alive command
   lineinfile:
-    dest=/usr/local/nagios/etc/objects/commands.cfg
-    regexp='(.+)(check_ping)(.+)(3000)(.+)'
-    backrefs=yes
-    line='\1\2\3\4\5 -4'
-    state=present
+    dest: /usr/local/nagios/etc/objects/commands.cfg
+    regexp: (.+)(check_ping)(.+)(3000)(.+)
+    backrefs: yes
+    line: \1\2\3\4\5 -4
+    state: present
 
 - name: Create clean directory for Contact Group fragments
   file:
-    path=/tmp/cntg
-    state="{{ item }}"
+    path: /tmp/cntg
+    state: "{{ item }}"
   with_items:
     - absent
     - directory
 
 - name: Create Contact Group fragments
   template:
-    src=../templates/contactgroups.cfg.j2
-    dest="/tmp/cntg/cntg-{{ item.contactgroup_name }}"
+    src: ../templates/contactgroups.cfg.j2
+    dest: /tmp/cntg/cntg-{{ item.contactgroup_name }}
   with_items:
     - "{{ contactgroups }}"
 
 - name: Create Common Contacts fragments
   template:
-    src=../templates/contact.cfg.j2
-    dest="/tmp/cntg/cntg-{{ item.contact_name }}"
+    src: ../templates/contact.cfg.j2
+    dest: /tmp/cntg/cntg-{{ item.contact_name }}
   with_items:
     - "{{ contacts }}"
 
 - name: Compose Contact Groups configuration
   assemble:
-    src=/tmp/cntg
-    dest=/usr/local/nagios/etc/objects-extra/00-ContactGroups.cfg
-    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
-    owner=nagios
-    group=nagios
-    mode=0664
+    src: /tmp/cntg
+    dest: /usr/local/nagios/etc/objects-extra/00-ContactGroups.cfg
+    delimiter: "{{'\n'}}###################################################{{'\n\n'}}"
+    owner: nagios
+    group: nagios
+    mode: 0664
 
 - name: Create clean directory for Service Group fragments
   file:
-    path=/tmp/svcg
-    state="{{ item }}"
+    path: /tmp/svcg
+    state: "{{ item }}"
   with_items:
     - absent
     - directory
 
 - name: Create Service Group fragments
   template:
-    src=../templates/servicegroups.cfg.j2
-    dest="/tmp/svcg/svcg-{{ item.servicegroup_name }}"
+    src: ../templates/servicegroups.cfg.j2
+    dest: /tmp/svcg/svcg-{{ item.servicegroup_name }}
   with_items:
     - "{{ servicegroups }}"
   when: servicegroups
 
 - name: Create Service template
   template:
-    src=../templates/service.cfg.j2
-    dest="/tmp/svcg/svct-{{ item.name }}"
+    src: ../templates/service.cfg.j2
+    dest: /tmp/svcg/svct-{{ item.name }}
   with_items:
     - "{{ servicetemplates }}"
   when: servicetemplates
 
 - name: Compose Service Groups configuration
   assemble:
-    src=/tmp/svcg
-    dest=/usr/local/nagios/etc/objects-extra/01-ServiceGroups.cfg
-    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
-    owner=nagios
-    group=nagios
-    mode=0664
+    src: /tmp/svcg
+    dest: /usr/local/nagios/etc/objects-extra/01-ServiceGroups.cfg
+    delimiter: "{{'\n'}}###################################################{{'\n\n'}}"
+    owner: nagios
+    group: nagios
+    mode: 0664
 
 - name: Create clean directory for Host Group fragments
   file:
-    path=/tmp/hstg
-    state="{{ item }}"
+    path: /tmp/hstg
+    state: "{{ item }}"
   with_items:
     - absent
     - directory
 
 - name: Create Host Group fragments
   template:
-    src=../templates/hostgroups.cfg.j2
-    dest="/tmp/hstg/hstg-{{ item.hostgroup_name }}"
+    src: ../templates/hostgroups.cfg.j2
+    dest: /tmp/hstg/hstg-{{ item.hostgroup_name }}
   with_items:
     - "{{ hostgroups }}"
   when: hostgroups
 
 - name: Create Host template
   template:
-    src=../templates/host.cfg.j2
-    dest="/tmp/hstg/hstt-{{ item.name }}"
+    src: ../templates/host.cfg.j2
+    dest: /tmp/hstg/hstt-{{ item.name }}
   with_items:
     - "{{ hosttemplates }}"
   when: hosttemplates
 
 - name: Compose Host Groups configuration
   assemble:
-    src=/tmp/hstg
-    dest=/usr/local/nagios/etc/objects-extra/02-HostGroups.cfg
-    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
-    owner=nagios
-    group=nagios
-    mode=0664
+    src: /tmp/hstg
+    dest: /usr/local/nagios/etc/objects-extra/ZZ-HostGroups.cfg
+    delimiter: "{{'\n'}}###################################################{{'\n\n'}}"
+    owner: nagios
+    group: nagios
+    mode: 0664
+
+- name: Prepare target directory for redmine alert archives
+  file:
+    path: /usr/local/nagios/var/redmine.bugs
+    owner: nagios
+    group: nagios
+    mode: 0755
+    state: directory
 
 - name: Upload custom notification script for redmine
   template:
-    src=../templates/redmine_bugs.j2
-    dest=/usr/local/nagios/libexec/redmine_bugs
-    owner=nagios
-    group=nagios
-    mode=0755
+    src: ../templates/redmine_bugs.j2
+    dest: /usr/local/nagios/libexec/redmine_bugs
+    owner: nagios
+    group: nagios
+    mode: 0755
 
 - name: Create clean directory for Command fragments
   file:
-    path=/tmp/cmd
-    state="{{ item }}"
+    path: /tmp/cmd
+    state: "{{ item }}"
   with_items:
     - absent
     - directory
 
 - name: Create Command fragments
   template:
-    src=../templates/command.cfg.j2
-    dest="/tmp/cmd/cmd-{{ item.command_name }}"
+    src: ../templates/command.cfg.j2
+    dest: /tmp/cmd/cmd-{{ item.command_name }}
   with_items:
     - "{{ commands }}"
 
 - name: Compose Commands configuration
   assemble:
-    src=/tmp/cmd
-    dest=/usr/local/nagios/etc/objects-extra/03-Commands.cfg
-    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
-    owner=nagios
-    group=nagios
-    mode=0664
+    src: /tmp/cmd
+    dest: /usr/local/nagios/etc/objects-extra/03-Commands.cfg
+    delimiter: "{{'\n'}}###################################################{{'\n\n'}}"
+    owner: nagios
+    group: nagios
+    mode: 0664

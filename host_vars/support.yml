@@ -4,6 +4,7 @@ host:
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Forge ServiceLab Support
     display_name: Support Machine
+    hostgroups: forge
 
 services:
 # apache_service
@@ -95,12 +96,12 @@ nrpe_commands:
     plugin_name: check_mem
     plugin_params: "-f -w 30 -c 10 -C"
 
-commands:
+host_commands:
   - command_name: check_jabber
     command_line: '$USER1$/check_jabber -H $ARG1$ -p $ARG2$ -e $ARG3$'
 
 # Contact definitions for Support host only:
-contacts:
+host_contacts:
 #  - contact_name: nobody
 #    contactgroups: noone
 #    host_notifications_enabled: 0

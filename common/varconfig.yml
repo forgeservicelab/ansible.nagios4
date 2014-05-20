@@ -1,54 +1,54 @@
 ---
 - name: Wipe temporary directory for template fragments
   file:
-    path=/tmp/host
-    state={{ item }}
+    path: /tmp/host
+    state: "{{ item }}"
   with_items:
     - absent
     - directory
 
 - name: Upload host fragment
   template:
-    src=../templates/host.cfg.j2
-    dest=/tmp/host/host
+    src: ../templates/host.cfg.j2
+    dest: /tmp/host/host
   with_items:
     - "{{ host }}"
   when: host != None
 
 - name: Upload service fragments
   template:
-    src=../templates/service.cfg.j2
-    dest=/tmp/host/svc-{{ item.id }}
+    src: ../templates/service.cfg.j2
+    dest: /tmp/host/svc-{{ item.id }}
   with_items:
     - "{{ services }}"
   when: services != None
 
 - name: Upload contact fragments
   template:
-    src=../templates/contact.cfg.j2
-    dest=/tmp/host/cnt-{{ item.contact_name.replace(' ','') }}
+    src: ../templates/contact.cfg.j2
+    dest: /tmp/host/cnt-{{ item.contact_name.replace(' ','') }}
   with_items:
-    - "{{ contacts }}"
-  when: contacts != None
+    - "{{ host_contacts }}"
+  when: host_contacts != None
 
 - name: Upload command fragments
   template:
-    src=../templates/command.cfg.j2
-    dest=/tmp/host/cmd-{{ item.command_name }}
+    src: ../templates/command.cfg.j2
+    dest: /tmp/host/cmd-{{ item.command_name }}
   with_items:
-    - "{{ commands }}"
-  when: commands != None
+    - "{{ host_commands }}"
+  when: host_commands != None
 
 - name: Compose host monitoring configuration
   assemble:
-    src=/tmp/host
-    dest="/usr/local/nagios/etc/objects-extra/Host-{{ target_inventory_hostname }}.cfg"
-    delimiter="{{'\n'}}###################################################{{'\n\n'}}"
-    owner=nagios
-    group=nagios
-    mode=0664
+    src: /tmp/host
+    dest: /usr/local/nagios/etc/objects-extra/Host-{{ target_inventory_hostname }}.cfg
+    delimiter: "{{'\n'}}###################################################{{'\n\n'}}"
+    owner: nagios
+    group: nagios
+    mode: 0664
 
 - name: Reload nagios service
   service:
-    name=nagios
-    state=restarted
+    name: nagios
+    state: restarted

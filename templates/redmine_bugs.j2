@@ -48,8 +48,8 @@ def archive_host_alert(args):
     request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues.json', json.dumps(bug), headers)
     response = json.loads(urllib2.urlopen(request).read())
     
-    tmpfile = open('/usr/local/nagios/var/redmine.bugs','a')
-    tmpfile.write('%s, %s, %s\n' % (args.hostname, args.state, response['issue']['id']))
+    tmpfile = open('/usr/local/nagios/var/redmine.bugs/%s' % args.hostname.replace(' ','-'),'a')
+    tmpfile.write('%s\n' % response['issue']['id'])
     tmpfile.close()
 
     send_chat_message(bug['issue']['subject'])
@@ -82,33 +82,20 @@ def archive_service_alert(args):
     request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues.json', json.dumps(bug), headers)
     response = json.loads(urllib2.urlopen(request).read())
 
-    tmpfile = open('/usr/local/nagios/var/redmine.bugs','a')
-    tmpfile.write('%s, %s, %s, %s\n' % (args.host_alias, args.service, args.state, response['issue']['id']))
+    tmpfile = open('/usr/local/nagios/var/redmine.bugs/%s_%s' % (args.host_alias.replace(' ','-'), args.service.replace(' ','-')),'a')
+    tmpfile.write('%s\n' % response['issue']['id'])
     tmpfile.close()
 
     send_chat_message(bug['issue']['subject'])
 
 def find_open_issues(hostname, service):
-    tmpfile = open('/usr/local/nagios/var/redmine.bugs','r')
     issues = []
-    cleanlines = list(tmpfile.readlines())
-    tmpfile.seek(0)
-
-    csvreader = csv.reader(tmpfile, skipinitialspace=True)
-    for row in csvreader:
-        if (service is None):
-            if (len(row) == 3 and row[0] == hostname):
-                issues.append(row[2])
-                cleanlines.remove(', '.join(row) + '\n')
-        else:
-            if (len(row) == 4 and row[0] == hostname and row[1] == service):
-                issues.append(row[3])
-                cleanlines.remove(', '.join(row) + '\n')
-    tmpfile.close()
-
-    tmpfile = open('/usr/local/nagios/var/redmine.bugs','w')
-    tmpfile.writelines(cleanlines)
-    tmpfile.close()
+    try:
+        tmpfile = open('/usr/local/nagios/var/redmine.bugs/%s' % (hostname.replace(' ','-') if service is None else '%s_%s' % (hostname.replace(' ','-'), service.replace(' ','-'))),'r')
+        issues = list(tmpfile.readlines())
+        tmpfile.close()
+    except IOError:
+        pass
     return issues
 
 def clear_alert(hostname, service):

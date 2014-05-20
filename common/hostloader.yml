@@ -1,8 +1,5 @@
 ---
-- debug: 
-    msg="{{ target_inventory_hostname }}"
-
 - name: Load host definitions
-  include_vars: "../host_vars/{{ target_inventory_hostname }}.yml"
+  include_vars: ../host_vars/{{ target_inventory_hostname }}.yml
 
 - include: varconfig.yml

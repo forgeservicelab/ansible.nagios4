@@ -4,6 +4,7 @@ host:
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
     alias: Forge ServiceLab Git
     display_name: GitLab Machine
+    hostgroups: forge
 
 services:
 # nginx_service
@@ -79,6 +80,6 @@ nrpe_commands:
     plugin_name: check_procs
     plugin_params: "-C sidekiq -c 1:"
 
-commands:
+host_commands:
 
-contacts:
+host_contacts:

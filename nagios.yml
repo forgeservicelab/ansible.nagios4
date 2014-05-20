@@ -1,4 +1,3 @@
 ---
-- include: common/resource-fetch.yml
 - include: setup.yml
 - include: common/config.yml

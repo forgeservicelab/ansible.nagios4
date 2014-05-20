@@ -9,7 +9,6 @@ Prerequisites
 
 - The target machine(s) have to be already instantiated, this playbook does not launch computing instances
 - It is needed to create an inventory file (use inventory.tpl as template and rename it as nagios.inventory) with either a group or a host aliased as `nagios`
-- This playbook runs tasks on the local machine, the inventory file needs to include a line with `127.0.0.1`
 
 How To Use
 ----------
