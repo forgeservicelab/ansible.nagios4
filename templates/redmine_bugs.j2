@@ -91,12 +91,16 @@ def archive_service_alert(args):
 def find_open_issues(hostname, service):
     issues = []
     try:
-        tmpfile = open('/usr/local/nagios/var/redmine.bugs/%s' % (hostname.replace(' ','-') if service is None else '%s_%s' % (hostname.replace(' ','-'), service.replace(' ','-'))),'r')
-        issues = list(tmpfile.readlines())
+        path = '/usr/local/nagios/var/redmine.bugs/%s' % (hostname.replace(' ','-') if service is None else '%s_%s' % (hostname.replace(' ','-'
+), service.replace(' ','-')))
+        tmpfile = open(path,'r')
+        issues = tmpfile.readlines()
         tmpfile.close()
+        if len(issues):
+            os.remove(path)
     except IOError:
         pass
-    return issues
+    return [ issue.strip() for issue in issues ]
 
 def clear_alert(hostname, service):
     data = { 'issue': { 'status_id': 5 } }
