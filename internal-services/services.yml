@@ -16,3 +16,9 @@
 - name: Set up Git monitoring
   include:
     ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: ci
+- name: Set up Jenkins monitoring
+  include:
+    ../common/hostloader.yml

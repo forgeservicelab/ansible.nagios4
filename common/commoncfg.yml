@@ -4,7 +4,7 @@
 
 - name: Disable LDAP server certificate name check
   lineinfile:
-    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}.conf
+    dest: /etc/{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}/{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}.conf
     line: LDAPVerifyServerCert Off
     insertafter: EOF
     state: present
@@ -12,20 +12,20 @@
 
 - name: Set up LDAP authentication
   replace:
-    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf
+    dest: /etc/{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}/conf.d/nagios.conf
     regexp: ^(.+)AuthUserFile.*$
     replace: "{{ ldap_auth_string }}"
   notify: restart apache
 
 - name: remove basic auth leftovers
   replace:
-    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf
+    dest: /etc/{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}/conf.d/nagios.conf
     regexp: ^(.+)Require valid-user$
   notify: restart apache
 
 - name: Redirect root to /nagios
   lineinfile:
-    dest: /etc/{{ 'apache2' if ansible_distribution == 'Debian' else 'httpd' }}/conf.d/nagios.conf
+    dest: /etc/{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}/conf.d/nagios.conf
     line: "{{ item }}"
     insertafter: EOF
   with_items:

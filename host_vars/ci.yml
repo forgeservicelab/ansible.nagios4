@@ -1,0 +1,75 @@
+---
+host:
+  - use: nagios_host
+    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
+    alias: Forge ServiceLab CI 
+    display_name: CI Machine
+    hostgroups: forge
+
+services:
+# nginx_service
+  - id: 0
+    use: nagios_service
+    service_description: "NRPE nginx service check"
+    check_command: "check_nrpe!check_nginx"
+    servicegroups: Availability
+
+# jenkins_service
+  - id: 1
+    use: nagios_service
+    service_description: "NRPE jenkins service check"
+    check_command: "check_nrpe!check_jenkins"
+    servicegroups: Availability
+
+# apache_check
+  - id: 2
+    use: nagios_service
+    service_description: "CI webserver connectivity check"
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-e 200 -d X-Jenkins"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
+    servicegroups: Connectivity
+
+# root_check
+  - id: 4
+    use: nagios_service
+    service_description: "NRPE root disk usage check"
+    check_command: "check_nrpe!check_root"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
+    servicegroups: Internals
+
+# load_check
+  - id: 5
+    use: nagios_service
+    service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
+    servicegroups: Internals
+
+# memory_check
+  - id: 6
+    use: nagios_service
+    service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
+    servicegroups: Internals
+
+nrpe_commands:
+  - command_name: check_root
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_load
+    plugin_name: check_load_extra
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
+  - command_name: check_nginx
+    plugin_name: check_procs
+    plugin_params: "-C nginx -c 1:"
+  - command_name: check_jenkins
+    plugin_name: check_procs
+    plugin_params: "-C java -a jenkins.war -c 1:"
+
+host_commands:
+
+host_contacts:
