@@ -45,6 +45,14 @@ services:
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
     servicegroups: Internals
 
+# var_check
+  - id: 7
+    use: nagios_service
+    service_description: "NRPE var disk usage check"
+    check_command: "check_nrpe!check_var"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/var,data"
+    servicegroups: Internals
+   
 # load_check
   - id: 5
     use: nagios_service
@@ -65,6 +73,9 @@ nrpe_commands:
   - command_name: check_root
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_var
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /var"
   - command_name: check_load
     plugin_name: check_load_extra
     plugin_params: "-w 1,1,1 -c 2,2,2 -r"
