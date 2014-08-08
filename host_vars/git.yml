@@ -96,10 +96,10 @@ nrpe_commands:
     plugin_params: "-C nginx -c 1:"
   - command_name: check_unicorn
     plugin_name: check_procs
-    plugin_params: "-C unicorn_rails -c 1:"
+    plugin_params: "-C ruby -a unicorn_rails -c 1:"
   - command_name: check_sidekiq
     plugin_name: check_procs
-    plugin_params: "-C sidekiq -c 1:"
+    plugin_params: "-C ruby -a sidekiq -c 1:"
 
 host_commands:
 
