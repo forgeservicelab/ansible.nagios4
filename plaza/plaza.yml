@@ -38,8 +38,3 @@
     target_inventory_hostname: nfs02
 - include:
     ../common/hostloader.yml
-
-- set_fact:
-    target_inventory_hostname: replication_host
-- include:
-    ../common/hostloader.yml

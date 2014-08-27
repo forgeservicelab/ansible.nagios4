@@ -2,18 +2,11 @@
 host:
   - use: nagios_host
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
-    alias: Replication host
-    display_name: Replicator
+    alias: FORGE Database Server
+    display_name: DBserver
     hostgroups: others
 
 services:
-  - id: 0
-    use: nagios_service
-    service_description: "NRPE mysql service check"
-    check_command: "check_nrpe!check_mysql"
-    servicegroups: Availability
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
-
   - id: 15 
     use: nagios_service
     service_description: "NRPE postgresql service check"
@@ -23,34 +16,16 @@ services:
 
   - id: 16
     use: nagios_service
-    service_description: "NRPE postgresql service check"
+    service_description: "NRPE postgresql WAL service check"
     check_command: "check_nrpe!check_postgresql_wal"
     servicegroups: Availability
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
 
-  - id: 1
-    use: nagios_service
-    service_description: "MySQL Database snapshot age"
-    check_command: "check_nrpe!check_mysql_database"
-    servicegroups: Availability
-
-  - id: 14
-    use: nagios_service
-    service_description: "PostgreSQL Database snapshot age"
-    check_command: "check_nrpe!check_postgresql_database"
-    servicegroups: Availability
-
-  - id: 2
-    use: nagios_service
-    service_description: "Filesystem snapshot age"
-    check_command: "check_nrpe!check_filesystem"
-    servicegroups: Availability
-
-# data_check
+# root_check
   - id: 9
     use: nagios_service
     service_description: "NRPE disk usage check"
-    check_command: "check_nrpe!check_data"
+    check_command: "check_nrpe!check_root"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/data,data"
     servicegroups: Internals
 
@@ -70,52 +45,28 @@ services:
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
-# replication_check
-  - id: 12
-    use: nagios_service
-    service_description: "MySQL replication check"
-    check_command: "check_nrpe!check_repl_mysql"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPoput()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=seconds behind master,data"
-    servicegroups: Internals
-
   - id: 13
     use: nagios_service
-    service_description: "PostgreSQL replication check"
-    check_command: "check_nrpe!check_repl_postgresql"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPoput()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=delay,data"
+    service_description: "PostgreSQL local connectivity check"
+    check_command: "check_nrpe!check_conn_postgresql"
     servicegroups: Internals
 
 nrpe_commands:
-  - command_name: check_data
+  - command_name: check_root
     plugin_name: check_disk
-    plugin_params: "-w 30% -c 10% -p /data"
+    plugin_params: "-w 30% -c 10% -p /"
   - command_name: check_load
     plugin_name: check_load_extra
     plugin_params: "-w 1,1,1 -c 2,2,2 -r"
   - command_name: check_memory
     plugin_name: check_mem
     plugin_params: "-f -w 30 -c 10 -C"
-  - command_name: check_mysql
-    plugin_name: check_procs
-    plugin_params: "-C mysqld -c 1:"
   - command_name: check_postgresql
     plugin_name: check_procs
     plugin_params: "-C postgres -c 2:"
   - command_name: check_postgresql_wal
     plugin_name: check_procs
-    plugin_params: "-C postgres -a 'wal receiver' -c 1:"
-  - command_name: check_mysql_database
-    plugin_name: check_file_age
-    plugin_params: "-f /data/database_snapshots/plaza -w 86400 -c 172800"
-  - command_name: check_postgresql_database
-    plugin_name: check_file_age
-    plugin_params: "-f /data/database_snapshots/dbserver -w 86400 -c 172800"
-  - command_name: check_filesystem
-    plugin_name: check_file_age
-    plugin_params: "-f /data/filesystem_snapshots -w 86400 -c 172800"
-  - command_name: check_repl_mysql
-    plugin_name: check_mysql
-    plugin_params: "-S -u root -w 60 -c 300"
-  - command_name: check_repl_postgresql
+    plugin_params: "-C postgres -a 'wal sender' -c 1:"
+  - command_name: check_conn_postgresql
     plugin_name: check_postgresql
-    plugin_params: "postgres -r -w 60 -c 300"
+    plugin_params: "postgres"
