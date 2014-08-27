@@ -75,6 +75,13 @@ services:
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
+# database_check
+  - id: 9
+    use: nagios_service
+    service_description: "GitLab database connectivity check"
+    check_command: "check_nrpe!check_database"
+    servicegroups: Internals
+
 nrpe_commands:
   - command_name: check_root
     plugin_name: check_disk
@@ -100,6 +107,9 @@ nrpe_commands:
   - command_name: check_sidekiq
     plugin_name: check_procs
     plugin_params: "-C ruby -a sidekiq -c 1:"
+  - command_name: check_database
+    plugin_name: check_postgresql.py
+    plugin_params: "-H dbserver.forgeservicelab.fi -d gitlab_production -u {{ gitlab_db_user }} -P {{ gitlab_db_pass }}"
 
 host_commands:
 

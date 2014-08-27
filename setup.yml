@@ -3,20 +3,16 @@
   sudo: True
   tags:
     - core
-  vars:
-    - is_core: True
   vars_files:
-    - host_vars/versions.yml
+    - vars/versions.yml
   roles:
-    - nagios4
+    - { role: nagios4, is_core: True }
 
 - hosts: nagios-remotes
   sudo: True
   tags:
     - remotes
-  vars:
-    - is_core: False
   vars_files:
-    - host_vars/versions.yml
+    - vars/versions.yml
   roles:
-    - nagios4
+    - { role: nagios4, is_core: False }

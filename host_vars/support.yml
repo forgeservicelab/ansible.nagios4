@@ -84,6 +84,13 @@ services:
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
+# database_check
+  - id: 10
+    use: nagios_service
+    service_description: "Redmine database connectivity check"
+    check_command: "check_nrpe!check_database"
+    servicegroups: Internals
+
 nrpe_commands:
   - command_name: check_apache
     plugin_name: check_procs
@@ -106,6 +113,9 @@ nrpe_commands:
   - command_name: check_memory
     plugin_name: check_mem
     plugin_params: "-f -w 30 -c 10 -C"
+  - command_name: check_database
+    plugin_name: check_postgresql.py
+    plugin_params: "-H dbserver.forgeservicelab.fi -d redmine_production -u {{ redmine_db_user }} -P {{ redmine_db_pass }}"
 
 host_commands:
   - command_name: check_jabber

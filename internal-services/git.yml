@@ -1,5 +1,0 @@
----
-- name: Load host definitions
-  include_vars: ../host_vars/git.yml
-
-- include: ../common/varconfig.yml

@@ -4,11 +4,10 @@
   tags:
     - core_config
   vars_files:
-    - ../host_vars/secrets.yml
-    - ../host_vars/servicegroups.yml
-    - ../host_vars/hostgroups.yml
-    - ../host_vars/contactgroups.yml
-    - ../host_vars/commands.yml
+    - ../vars/servicegroups.yml
+    - ../vars/hostgroups.yml
+    - ../vars/contactgroups.yml
+    - ../vars/commands.yml
   tasks:
     - include: commoncfg.yml
 
@@ -26,8 +25,6 @@
   sudo: True
   tags:
     - remotes 
-  vars_files:
-    - ../host_vars/{{ inventory_hostname }}.yml
   handlers:
     - include: handlers.yml
   tasks:
