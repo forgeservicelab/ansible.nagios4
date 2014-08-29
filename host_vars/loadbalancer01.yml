@@ -5,6 +5,9 @@ host:
     alias: "Plaza {{ target_inventory_hostname }}"
     display_name: "Plaza {{ target_inventory_hostname }}"
     hostgroups: plaza
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: haproxy.gd2
+    2d_coords: 420.0,150.0
 
 services:
 # heartbeat_service
@@ -63,3 +66,7 @@ nrpe_commands:
   - command_name: check_heartbeat
     plugin_name: check_procs
     plugin_params: "-C heartbeat -c 4:"
+
+host_commands:
+
+host_contacts:

@@ -32,3 +32,8 @@
     target_inventory_hostname: dbserver
 - include:
     ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: openstack
+- include:
+    ../common/hostloader.yml

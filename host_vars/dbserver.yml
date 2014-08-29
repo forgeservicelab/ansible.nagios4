@@ -5,6 +5,9 @@ host:
     alias: FORGE Database Server
     display_name: DBserver
     hostgroups: others
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: postgresql.gd2
+    2d_coords: 245.0,150.0
 
 services:
   - id: 15 
@@ -70,3 +73,7 @@ nrpe_commands:
   - command_name: check_conn_postgresql
     plugin_name: check_postgresql
     plugin_params: "postgres"
+
+host_commands:
+
+host_contacts:

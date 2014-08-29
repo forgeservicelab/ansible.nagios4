@@ -5,6 +5,9 @@ host:
     alias: Replication host
     display_name: Replicator
     hostgroups: others
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: database.gd2
+    2d_coords: 245.0,260.0
 
 services:
   - id: 0
@@ -119,3 +122,7 @@ nrpe_commands:
   - command_name: check_repl_postgresql
     plugin_name: check_postgresql
     plugin_params: "postgres -r -w 60 -c 300"
+
+host_commands:
+
+host_contacts:

@@ -5,6 +5,9 @@ host:
     alias: "Plaza {{ target_inventory_hostname }}"
     display_name: "Plaza {{ target_inventory_hostname }}"
     hostgroups: plaza
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: mysql.gd2
+    2d_coords: 370.0,370.0
 
 services:
 # heartbeat_service
@@ -93,3 +96,7 @@ nrpe_commands:
   - command_name: check_drbd_receiver
     plugin_name: check_procs
     plugin_params: "-C drbd0_receiver -c 1:"
+
+host_commands:
+
+host_contacts:

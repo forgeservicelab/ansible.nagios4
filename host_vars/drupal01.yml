@@ -5,6 +5,9 @@ host:
     alias: "Plaza {{ target_inventory_hostname }}"
     display_name: "Plaza {{ target_inventory_hostname }}"
     hostgroups: plaza
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: drupal.gd2
+    2d_coords: 420.0,260.0
 
 services:
 # apache_service
@@ -110,3 +113,7 @@ nrpe_commands:
   - command_name: check_exim
     plugin_name: check_procs
     plugin_params: "-C exim4 -c 1:"
+
+host_commands:
+
+host_contacts:

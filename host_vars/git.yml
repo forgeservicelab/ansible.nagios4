@@ -5,6 +5,9 @@ host:
     alias: Forge ServiceLab Git
     display_name: GitLab Machine
     hostgroups: forge
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: gitlab.gd2
+    2d_coords: 120.0,150.0
 
 services:
 # nginx_service

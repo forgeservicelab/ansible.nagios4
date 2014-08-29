@@ -1,6 +1,6 @@
 define service {
 {% if target_inventory_hostname is defined %}
-  host_name		{{ hostvars[target_inventory_hostname]['inventory_hostname'] }}
+  host_name		{{ target_inventory_hostname }}
 {% endif %}
 {% for option in [
 	'service_description',

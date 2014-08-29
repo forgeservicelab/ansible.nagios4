@@ -1,1 +1,72 @@
-loadbalancer01.yml
+---
+host:
+  - use: nagios_host
+    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
+    alias: "Plaza {{ target_inventory_hostname }}"
+    display_name: "Plaza {{ target_inventory_hostname }}"
+    hostgroups: plaza
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: haproxy.gd2
+    2d_coords: 620.0,150.0
+
+services:
+# heartbeat_service
+  - id: 1
+    use: nagios_service
+    service_description: "NRPE heartbeat service check"
+    check_command: "check_nrpe!check_heartbeat"
+    servicegroups: Availability
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
+
+# haproxy_check
+  - id: 2
+    use: nagios_service
+    service_description: "Haproxy SSL redirect connectivity check through common URI"
+    check_command: "check_proxy!forgeservicelab.fi!5!10!-d 'Location: https://' -e 302 --no-body"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
+    servicegroups: Connectivity
+
+# root_check
+  - id: 9
+    use: nagios_service
+    service_description: "NRPE root disk usage check"
+    check_command: "check_nrpe!check_root"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
+    servicegroups: Internals
+
+# load_check
+  - id: 10
+    use: nagios_service
+    service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
+    servicegroups: Internals
+
+# memory_check
+  - id: 11
+    use: nagios_service
+    service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
+    servicegroups: Internals
+
+nrpe_commands:
+  - command_name: check_root
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_load
+    plugin_name: check_load_extra
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
+  - command_name: check_haproxy
+    plugin_name: check_procs
+    plugin_params: "-C haproxy -c 1:"
+  - command_name: check_heartbeat
+    plugin_name: check_procs
+    plugin_params: "-C heartbeat -c 4:"
+
+host_commands:
+
+host_contacts:

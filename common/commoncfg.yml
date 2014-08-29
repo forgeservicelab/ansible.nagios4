@@ -53,6 +53,14 @@
     line: \1\2\3\4\5 -4
     state: present
 
+- name: Upload openstack credentials file
+  template:
+    src: ../templates/openstack.j2
+    dest: /usr/local/nagios/etc/openstack.conf
+    owner: nagios
+    group: nagios
+    mode: 0400
+
 - name: Create clean directory for Contact Group fragments
   file:
     path: /tmp/cntg

@@ -5,6 +5,9 @@ host:
     alias: Forge ServiceLab Auth
     display_name: Auth Machine
     hostgroups: forge
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: forge.gd2
+    2d_coords: 20.0,260.0
 
 services:
 # apache_service

@@ -1,6 +1,6 @@
 define host {
 {% if target_inventory_hostname is defined %}
-  host_name		{{ hostvars[target_inventory_hostname]['inventory_hostname'] }}
+  host_name		{{ target_inventory_hostname }}
 {% endif %}
 {% for option in [ 
 	'alias',
@@ -17,7 +17,10 @@ define host {
 	'hourly_value',
 	'name',
 	'register',
+	'icon_image',
+	'statusmap_image',
 	'check_command',
+	'2d_coords',
 	'hostgroups' ] %}
 {% if option in item.keys() %}
   {{ option }}		{{ item[option] }}
