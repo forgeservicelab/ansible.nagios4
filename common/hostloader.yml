@@ -2,4 +2,8 @@
 - name: Load host definitions
   include_vars: ../host_vars/{{ target_inventory_hostname }}.yml
 
+- name: Load group definitions
+  include_vars: ../group_vars/{{ target_inventory_group }}.yml
+  when: target_inventory_group != None
+
 - include: varconfig.yml

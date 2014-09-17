@@ -1,5 +1,8 @@
 ---
 - set_fact:
+    target_inventory_group:
+
+- set_fact:
     target_inventory_hostname: support
 - name: Set up Support monitoring
   include:
@@ -24,16 +27,76 @@
     ../common/hostloader.yml
 
 - set_fact:
-    target_inventory_hostname: replication_host
-- include:
-    ../common/hostloader.yml
-
-- set_fact:
     target_inventory_hostname: dbserver
 - include:
     ../common/hostloader.yml
 
 - set_fact:
+    target_inventory_hostname: replication_host
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
     target_inventory_hostname: openstack
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid00
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid01
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid02
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid03
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid04
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid05
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid06
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid07
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid08
+    target_inventory_group: grid
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
+    target_inventory_hostname: grid09
+    target_inventory_group: grid
 - include:
     ../common/hostloader.yml

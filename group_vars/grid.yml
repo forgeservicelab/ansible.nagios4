@@ -1,36 +1,18 @@
 ---
-host:
-  - use: nagios_host
-    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
-    alias: Forge ServiceLab CI 
-    display_name: CI Machine
-    hostgroups: forge
-    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
-    statusmap_image: jenkins.gd2
-    2d_coords: 245.0,370.0
-
 services:
-# nginx_service
-  - id: 0
-    use: nagios_service
-    service_description: "NRPE nginx service check"
-    check_command: "check_nrpe!check_nginx"
-    servicegroups: Availability
-
-# jenkins_service
+# jenkins_slave_service
   - id: 1
     use: nagios_service
-    service_description: "NRPE jenkins service check"
+    service_description: "NRPE jenkins slave service check"
     check_command: "check_nrpe!check_jenkins"
     servicegroups: Availability
 
-# apache_check
+# selenium_service
   - id: 2
     use: nagios_service
-    service_description: "CI webserver connectivity check"
-    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-e 200 -d X-Jenkins"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
-    servicegroups: Connectivity
+    service_description: "NRPE selenium service check"
+    check_command: "check_nrpe!check_selenium"
+    servicegroups: Availability
 
 # root_check
   - id: 4
@@ -65,12 +47,12 @@ nrpe_commands:
   - command_name: check_root
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /"
-  - command_name: check_nginx
-    plugin_name: check_procs
-    plugin_params: "-C nginx -c 1:"
   - command_name: check_jenkins
     plugin_name: check_procs
-    plugin_params: "-C java -a jenkins.war -c 1:"
+    plugin_params: "-C java -a slave.jar --ereg-argument-array=-Dhost.name -c 1:"
+  - command_name: check_selenium
+    plugin_name: check_procs
+    plugin_params: "-C java -a slave.jar --ereg-argument-array=selenium-server.*.jar -c 1:"
 
 host_commands:
 

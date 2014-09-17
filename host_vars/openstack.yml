@@ -1,0 +1,33 @@
+---
+host:
+  - use: nagios_host
+    address: cloud.forgeservicelab.fi
+    alias: Forge OpenStack Cloud
+    display_name: OpenStack
+    hostgroups: others
+    icon_image: openstack.png
+    statusmap_image: openstack.gd2
+    2d_coords: 20.0,150.0
+
+services:
+# nova_service
+  - id: 0
+    use: nagios_service
+    service_description: "Nova service check"
+    check_command: "check_openstack!nova!/usr/local/nagios/etc/openstack.conf"
+    servicegroups: Availability
+
+# neutron_service
+  - id: 1
+    use: nagios_service
+    service_description: "Neutron service check"
+    check_command: "check_openstack!neutron!/usr/local/nagios/etc/openstack.conf"
+    servicegroups: Availability
+
+nrpe_commands:
+
+host_commands:
+  - command_name: check_openstack
+    command_line: '$USER1$/check_openstack.py --$ARG1$ -c $ARG2$'
+
+host_contacts:

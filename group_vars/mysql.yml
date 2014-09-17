@@ -1,42 +1,53 @@
 ---
-host:
-  - use: nagios_host
-    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
-    alias: FORGE Database Server
-    display_name: DBserver
-    hostgroups: others
-    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
-    statusmap_image: postgresql.gd2
-    2d_coords: 245.0,150.0
-
 services:
-  - id: 15 
+# heartbeat_service
+  - id: 0
     use: nagios_service
-    service_description: "NRPE postgresql service check"
-    check_command: "check_nrpe!check_postgresql"
+    service_description: "NRPE heartbeat service check"
+    check_command: "check_nrpe!check_heartbeat"
     servicegroups: Availability
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
 
-  - id: 16
+# drbd_worker_service
+  - id: 1
     use: nagios_service
-    service_description: "NRPE postgresql WAL service check"
-    check_command: "check_nrpe!check_postgresql_wal"
+    service_description: "NRPE DRBD worker service check"
+    check_command: "check_nrpe!check_drbd_worker"
     servicegroups: Availability
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
 
-# root_check
+# drbd_sender_service
+  - id: 2
+    use: nagios_service
+    service_description: "NRPE DRBD sender service check"
+    check_command: "check_nrpe!check_drbd_sender"
+    servicegroups: Availability
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
+
+# drbd_receiver_service
+  - id: 3
+    use: nagios_service
+    service_description: "NRPE DRBD receiver service check"
+    check_command: "check_nrpe!check_drbd_receiver"
+    servicegroups: Availability
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
+
+# mysql_check
+  - id: 4
+    use: nagios_service
+    service_description: "MySQL connectivity check through common URI"
+    check_command: "check_mysql!mysql.forgeservicelab.fi!5!10"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
+    servicegroups: Connectivity
+
+# data_check
   - id: 9
     use: nagios_service
     service_description: "NRPE disk usage check"
-    check_command: "check_nrpe!check_root"
+    check_command: "check_nrpe!check_data"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/data,data"
     servicegroups: Internals
 
-  - id: 13
-    use: nagios_service
-    service_description: "PostgreSQL local connectivity check"
-    check_command: "check_nrpe!check_conn_postgresql"
-    servicegroups: Internals
 # load_check
   - id: 98
     use: nagios_service
@@ -60,18 +71,21 @@ nrpe_commands:
   - command_name: check_memory
     plugin_name: check_mem
     plugin_params: "-f -w 30 -c 10 -C"
-  - command_name: check_root
+  - command_name: check_data
     plugin_name: check_disk
-    plugin_params: "-w 30% -c 10% -p /"
-  - command_name: check_postgresql
+    plugin_params: "-w 30% -c 10%"
+  - command_name: check_heartbeat
     plugin_name: check_procs
-    plugin_params: "-C postgres -c 2:"
-  - command_name: check_postgresql_wal
+    plugin_params: "-C heartbeat -c 4:"
+  - command_name: check_drbd_worker
     plugin_name: check_procs
-    plugin_params: "-C postgres -a 'wal sender' -c 1:"
-  - command_name: check_conn_postgresql
-    plugin_name: check_postgresql
-    plugin_params: "postgres"
+    plugin_params: "-C drbd0_worker -c 1:"
+  - command_name: check_drbd_sender
+    plugin_name: check_procs
+    plugin_params: "-C drbd0_asender -c 1:"
+  - command_name: check_drbd_receiver
+    plugin_name: check_procs
+    plugin_params: "-C drbd0_receiver -c 1:"
 
 host_commands:
 

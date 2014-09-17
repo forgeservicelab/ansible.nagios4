@@ -8,6 +8,7 @@ host:
     icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
     statusmap_image: database.gd2
     2d_coords: 245.0,260.0
+    parents: dbserver, git, ci, nfs01, nfs02
 
 services:
   - id: 0
@@ -26,7 +27,7 @@ services:
 
   - id: 16
     use: nagios_service
-    service_description: "NRPE postgresql service check"
+    service_description: "NRPE postgresql WAL service check"
     check_command: "check_nrpe!check_postgresql_wal"
     servicegroups: Availability
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"

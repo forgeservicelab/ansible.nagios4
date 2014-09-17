@@ -35,7 +35,7 @@ services:
   - id: 3
     use: nagios_service
     service_description: "Gitlab connectivity check"
-    check_command: 'check_https!{{ hostvars[target_inventory_hostname]["ansible_ssh_host"] if hostvars[target_inventory_hostname]["ansible_ssh_host"] is defined else hostvars[target_inventory_hostname]["inventory_hostname"] }}!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Public Projects"'
+    check_command: 'check_https!{{ hostvars[target_inventory_hostname]["ansible_ssh_host"] if hostvars[target_inventory_hostname]["ansible_ssh_host"] is defined else hostvars[target_inventory_hostname]["inventory_hostname"] }}!5!10!-u /public -d "Set-Cookie: _gitlab" -e 200 -s "Explore GitLab"'
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
@@ -54,28 +54,12 @@ services:
     check_command: "check_nrpe!check_var"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/var,data"
     servicegroups: Internals
-    
+
   - id: 8
     use: nagios_service
     service_description: "NRPE data disk usage check"
     check_command: "check_nrpe!check_data"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/data,data"
-    servicegroups: Internals
-
-# load_check
-  - id: 5
-    use: nagios_service
-    service_description: "NRPE CPU usage check"
-    check_command: "check_nrpe!check_load"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
-    servicegroups: Internals
-
-# memory_check
-  - id: 6
-    use: nagios_service
-    service_description: "NRPE RAM usage check"
-    check_command: "check_nrpe!check_memory"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
     servicegroups: Internals
 
 # database_check
@@ -84,8 +68,29 @@ services:
     service_description: "GitLab database connectivity check"
     check_command: "check_nrpe!check_database"
     servicegroups: Internals
+# load_check
+  - id: 98
+    use: nagios_service
+    service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
+    servicegroups: Internals
+
+# memory_check
+  - id: 99
+    use: nagios_service
+    service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
+    servicegroups: Internals
 
 nrpe_commands:
+  - command_name: check_load
+    plugin_name: check_load_extra
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
   - command_name: check_root
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /"
@@ -95,12 +100,6 @@ nrpe_commands:
   - command_name: check_data
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /data"
-  - command_name: check_load
-    plugin_name: check_load_extra
-    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
-  - command_name: check_memory
-    plugin_name: check_mem
-    plugin_params: "-f -w 30 -c 10 -C"
   - command_name: check_nginx
     plugin_name: check_procs
     plugin_params: "-C nginx -c 1:"

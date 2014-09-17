@@ -5,6 +5,30 @@
     - core
   vars_files:
     - vars/versions.yml
+  pre_tasks:
+    - name: Install httplib2
+      apt:
+        pkg: "{{ item }}"
+        state: latest
+      with_items:
+        - python-httplib2
+
+    - shell: service nagios status
+      register: nagiosstatus
+      ignore_errors: yes
+
+    - name: Disable nagios notifications
+      uri:
+        method: POST
+        HEADER_Cache-Control: no-cache
+        HEADER_Content-Type: application/x-www-form-urlencoded
+        url: http://nagios.forgeservicelab.fi/nagios/cgi-bin/cmd.cgi
+        body: cmd_typ=11&cmd_mod=2&btnSubmit=Commit
+        user: "{{ nagios_id }}"
+        password: "{{ nagios_pwd }}"
+        force_basic_auth: yes
+      when: nagiosstatus.rc == 0
+
   roles:
     - { role: nagios4, is_core: True }
 

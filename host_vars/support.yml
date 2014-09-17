@@ -7,7 +7,7 @@ host:
     hostgroups: forge
     icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
     statusmap_image: redmine.gd2
-    2d_coords: 20.0,150.0
+    2d_coords: 120.0,260.0
 
 services:
 # apache_service

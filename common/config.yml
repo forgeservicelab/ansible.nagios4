@@ -11,9 +11,9 @@
   tasks:
     - include: commoncfg.yml
 
-    - include: ../internal-services/services.yml
-
     - include: ../plaza/plaza.yml
+
+    - include: ../internal-services/services.yml
 
   handlers:
     - name: restart apache
@@ -71,4 +71,21 @@
         regexp: ^enable_notifications
         line: enable_notifications=1
         state: present
-  # Do not bounce the service after this task or notifications will start being sent for recovering services. Enable or bounce via the WebUI.
+
+    - name: Allow a couple of minutes for the services to recover
+      wait_for:
+        timeout: 10
+      with_items:
+        - [ 110, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0 ]
+
+    - name: Enable nagios notifications
+      uri:
+        method: POST
+        HEADER_Cache-Control: no-cache
+        HEADER_Content-Type: application/x-www-form-urlencoded
+        url: http://nagios.forgeservicelab.fi/nagios/cgi-bin/cmd.cgi
+        body: cmd_typ=12&cmd_mod=2&btnSubmit=Commit
+        user: "{{ nagios_id }}"
+        password: "{{ nagios_pwd }}"
+        force_basic_auth: yes
+
