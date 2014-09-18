@@ -6,7 +6,7 @@ hostgroups:
     hostgroup_alias: Selenium GRID and CI slaves
   - hostgroup_name: plaza
     hostgroup_alias: FORGE ServiceLab drupal infrastructure
-    notes: Version <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><script>$$.get('https://testing.forgeservicelab.fi/version', function(version){document.write(version)})</script> deployed
+    notes: <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><script>$$.get('https://forgeservicelab.fi/git_info.php', function(version){$('#prod_version')[0].innerHTML = $('td',version)[3].innerHTML})</script><script>$$.get('https://testing.forgeservicelab.fi/git_info.php', function(version){$('#test_version')[0].innerHTML = $('td',version)[3].innerHTML})</script>Version <span id=prod_version></span> deployed on Production<br>Version <span id=test_version></span> deployed on Testing
 
 hosttemplates:
   - name: nagios_host
