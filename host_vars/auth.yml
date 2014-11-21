@@ -44,7 +44,7 @@ services:
   - id: 5
     use: nagios_service
     service_description: "NRPE CAS session check"
-    check_command: "check_cas_sess_nrpe!check_cas_sessions!localhost 1 5"
+    check_command: "check_nrpe!check_cas_sessions"
     servicegroups: Internals
 
 # root_check
@@ -100,12 +100,10 @@ nrpe_commands:
     plugin_params: "-C slapd -c 1:"
   - command_name: check_cas_sessions
     plugin_name: check_cas_sessions
-    plugin_params: "-H $ARG1 -U {{ casino_db_user }} -P {{ casino_db_pass }} -d $ARG2$ -s $ARG3$"
+    plugin_params: "-H localhost -U {{ casino_db_user }} -P {{ casino_db_pass }} -d 1 -s 5"
 
 host_commands:
   - command_name: check_cas
     command_line: '$USER1$/check_cas -H $ARG1$ -w $ARG2$ -c $ARG3$ $ARG4$'
-  - command_name: check_cas_sess_nrpe
-    command_line: '$USER1$/check_nrpe -H $HOSTADDRESS$ -u -c $ARG1$ -a $ARG2$'
 
 host_contacts:
