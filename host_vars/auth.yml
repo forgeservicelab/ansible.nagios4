@@ -29,7 +29,7 @@ services:
     use: nagios_service
     service_description: "Auth webserver connectivity check"
     check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /login -k 'Accept: text/html' -e 200 -d 'Set-Cookie: _CASinoApp' -s 'FORGE Authentication'"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data'"
     servicegroups: Connectivity
 
 # cas_check
@@ -37,8 +37,15 @@ services:
     use: nagios_service
     service_description: "CAS Authentication check"
     check_command: "check_cas!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-S -u /login -s 'You are currently logged in' -l {{ cas_username }} -P {{ cas_password }} -S"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data'"
     servicegroups: Connectivity
+
+# cas_session_check
+  - id: 5
+    use: nagios_service
+    service_description: "NRPE CAS session check"
+    check_command: "check_cas_sess_nrpe!check_cas_sessions!localhost {{ casino_db_user }} {{ casino_db_pass }} 1 5"
+    servicegroups: Internals
 
 # root_check
   - id: 4
@@ -91,9 +98,14 @@ nrpe_commands:
   - command_name: check_ldap
     plugin_name: check_procs
     plugin_params: "-C slapd -c 1:"
+  - command_name: check_cas_sessions
+    plugin_name: check_cas_sessions
+    plugin_params: "-H $ARG1 -U $ARG2$ -P $ARG3$ -d $ARG4$ -s $ARG5$"
 
 host_commands:
   - command_name: check_cas
     command_line: '$USER1$/check_cas -H $ARG1$ -w $ARG2$ -c $ARG3$ $ARG4$'
+  - command_name: check_cas_sess_nrpe
+    command_line: '$USER1$/check_nrpe -H $HOSTADDRESS$ -u -c $ARG1$ -a $ARG2$'
 
 host_contacts:
