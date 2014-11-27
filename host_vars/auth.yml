@@ -45,6 +45,7 @@ services:
     use: nagios_service
     service_description: "NRPE CAS session check"
     check_command: "check_nrpe!check_cas_sessions"
+    retry_interval: 3
     servicegroups: Internals
 
 # root_check
