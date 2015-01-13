@@ -6,7 +6,7 @@ hostgroups:
     hostgroup_alias: Selenium GRID and CI slaves
   - hostgroup_name: plaza
     hostgroup_alias: FORGE ServiceLab drupal infrastructure
-    notes: <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><script>$$.get('https://forgeservicelab.fi/git_info.php', function(version){ $$('#prod_version').each( function() { this.innerHTML = '<a href=https://git.forgeservicelab.fi/druid/web/commits/{commit} target=_blank>{commit}</a>'.replace(/{commit}/g, version.tag_name })})</script><script>$$.get('https://testing.forgeservicelab.fi/git_info.php', function(version){ $$('#test_version').each(function() { this.innerHTML = '<a href=https://git.forgeservicelab.fi/druid/web/commits/{commit} target=_blank>{commit}</a>'.replace(/{commit}/g, version.tag_name) })})</script>Version <span id=prod_version></span> deployed on Production<br>Revision <span id=test_version></span> deployed on Testing
+    notes: <script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><script>$$.get('https://forgeservicelab.fi/git_info.php', function(version){ $$('#prod_version').each( function() { this.innerHTML = '<a href=https://git.forgeservicelab.fi/druid/web/commits/{commit} target=_blank>{commit}</a>'.replace(/{commit}/g, version.tag_name) })})</script><script>$$.get('https://testing.forgeservicelab.fi/git_info.php', function(version){ $$('#test_version').each(function() { this.innerHTML = '<a href=https://git.forgeservicelab.fi/druid/web/commits/{commit} target=_blank>{commit}</a>'.replace(/{commit}/g, version.tag_name) })})</script>Version <span id=prod_version></span> deployed on Production<br>Revision <span id=test_version></span> deployed on Testing
 
 hosttemplates:
   - name: nagios_host
