@@ -1,6 +1,0 @@
-[submodule "roles/common"]
-	path = roles/common
-	url = ssh://gitlab@git.forgeservicelab.fi:10022/ansible-roles/common.git
-[submodule "roles/nagios4"]
-	path = roles/nagios4
-	url = ssh://gitlab@git.forgeservicelab.fi:10022/ansible-roles/nagios4.git

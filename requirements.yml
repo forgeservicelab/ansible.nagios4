@@ -1,0 +1,4 @@
+#roles/common
+- src: git+ssh://gitlab@git.forgeservicelab.fi:10022/ansible-roles/common.git
+#roles/nagios4
+- src: git+ssh://gitlab@git.forgeservicelab.fi:10022/ansible-roles/nagios4.git
