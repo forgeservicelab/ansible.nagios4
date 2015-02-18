@@ -26,6 +26,8 @@
   sudo: True
   tags:
     - remotes
+  vars_files:
+    - ../vars/secrets.yml
   handlers:
     - include: handlers.yml
   tasks:
