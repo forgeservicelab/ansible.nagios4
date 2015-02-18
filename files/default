@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-  Redirect / https://$http_host/
+  Redirect / https://nagios.forgeservicelab.fi/
 
 	ErrorLog ${APACHE_LOG_DIR}/error.log
 
