@@ -8,6 +8,7 @@
     - ../vars/hostgroups.yml
     - ../vars/contactgroups.yml
     - ../vars/commands.yml
+    - ../vars/secrets.yml
   tasks:
     - include: commoncfg.yml
 
@@ -24,7 +25,7 @@
 - hosts: nagios-remotes
   sudo: True
   tags:
-    - remotes 
+    - remotes
   handlers:
     - include: handlers.yml
   tasks:
@@ -88,4 +89,3 @@
         user: "{{ nagios_id }}"
         password: "{{ nagios_pwd }}"
         force_basic_auth: yes
-

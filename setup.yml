@@ -5,6 +5,7 @@
     - core
   vars_files:
     - vars/versions.yml
+    - vars/secrets.yml
   pre_tasks:
     - name: Install httplib2
       apt:
@@ -30,7 +31,9 @@
       when: nagiosstatus.rc == 0
 
   roles:
-    - { role: nagios4, is_core: True }
+    - role: forge_ssl
+    - role: nagios4
+      is_core: True
 
 - hosts: nagios-remotes
   sudo: True
@@ -39,4 +42,5 @@
   vars_files:
     - vars/versions.yml
   roles:
-    - { role: nagios4, is_core: False }
+    - role: nagios4
+      is_core: False
