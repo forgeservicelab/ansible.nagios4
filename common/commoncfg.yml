@@ -1,6 +1,33 @@
 ---
-- name: Enable Apache LDAP module
-  shell: a2enmod authnz_ldap
+- name: Enable Apache LDAP and SSL modules
+  shell: "a2enmod {{ item }}"
+  with_items:
+    - authnz_ldap
+    - ssl
+  register: module
+  changed_when: "'already enabled' not in module.stdout_lines[-1]"
+  notify: restart apache
+
+- name: Upload HTTP and HTTPS configuration files
+  copy:
+    src: "../files/{{ item }}"
+    dest: /etc/{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}/sites-available/
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - default
+    - default-ssl
+  notify: restart apache
+
+- name: Enable Apache default sites
+  shell: "a2ensite {{ item }}"
+  with_items:
+    - default
+    - default-ssl
+  register: site
+  changed_when: "'already enabled' not in site.stdout_lines[-1]"
+  notify: restart apache
 
 - name: Upload apache configuration
   template:

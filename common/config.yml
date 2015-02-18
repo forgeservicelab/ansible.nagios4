@@ -84,7 +84,7 @@
         method: POST
         HEADER_Cache-Control: no-cache
         HEADER_Content-Type: application/x-www-form-urlencoded
-        url: http://nagios.forgeservicelab.fi/nagios/cgi-bin/cmd.cgi
+        url: https://nagios.forgeservicelab.fi/nagios/cgi-bin/cmd.cgi
         body: cmd_typ=12&cmd_mod=2&btnSubmit=Commit
         user: "{{ nagios_id }}"
         password: "{{ nagios_pwd }}"
