@@ -6,7 +6,7 @@
 ScriptAlias /nagios/cgi-bin "/usr/local/nagios/sbin"
 
 <Directory "/usr/local/nagios/sbin">
-  #  SSLRequireSSL
+  SSLRequireSSL
   Options ExecCGI
   AllowOverride None
   Order allow,deny
@@ -16,19 +16,22 @@ ScriptAlias /nagios/cgi-bin "/usr/local/nagios/sbin"
   AuthType Basic
   AuthBasicProvider ldap
 
-  AuthLDAPURL "ldaps://auth2.forgeservicelab.fi:636/ou=accounts,dc=forgeservicelab,dc=fi?cn"
-  AuthLDAPBindDN "cn=binder,ou=accounts,dc=forgeservicelab,dc=fi"
-  AuthLDAPBindPassword "022h8SpI2E1!!7c"
+  AuthName "Nagios Access"
+  AuthType Basic
+  AuthBasicProvider ldap
 
-  Require ldap-group ou=digile.platform, ou=groups, dc=forgeservicelab, dc=fi
-  Require ldap-group ou=digile.sbd, ou=groups, dc=forgeservicelab, dc=fi
-
+  AuthLDAPURL "{{ ldap_auth_url }}"
+  AuthLDAPBindDN "{{ ldap_bind_name }}"
+  AuthLDAPBindPassword "{{ ldap_password }}"
+{% for group in allowed_ldap_groups %}
+  Require ldap-group cn={{ group }},{{ ldap_group_base }}
+{% endfor %}
 </Directory>
 
 Alias /nagios "/usr/local/nagios/share"
 
 <Directory "/usr/local/nagios/share">
-  #  SSLRequireSSL
+  SSLRequireSSL
   Options None
   AllowOverride None
   Order allow,deny
