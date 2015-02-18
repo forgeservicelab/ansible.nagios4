@@ -42,7 +42,7 @@ Alias /nagios "/usr/local/nagios/share"
   AuthLDAPBindDN "{{ ldap_bind_name }}"
   AuthLDAPBindPassword "{{ ldap_password }}"
 {% for group in allowed_ldap_groups %}
-  Require ldap-group ou={{ group }},{{ ldap_group_base }}
+  Require ldap-group cn={{ group }},{{ ldap_group_base }}
 {% endfor %}
 </Directory>
 
