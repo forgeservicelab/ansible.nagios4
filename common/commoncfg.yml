@@ -4,6 +4,7 @@
   with_items:
     - authnz_ldap
     - ssl
+    - headers
   register: module
   changed_when: "'already enabled' not in module.stdout_lines[-1]"
   notify: restart apache
