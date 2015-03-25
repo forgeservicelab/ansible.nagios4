@@ -42,6 +42,11 @@
     ../common/hostloader.yml
 
 - set_fact:
+    target_inventory_hostname: analytics
+- include:
+    ../common/hostloader.yml
+
+- set_fact:
     target_inventory_hostname: grid00
     target_inventory_group: grid
 - include:

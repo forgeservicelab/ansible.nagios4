@@ -1,0 +1,87 @@
+---
+host:
+  - use: nagios_host
+    address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
+    alias: Forge ServiceLab Analytics
+    display_name: Analytics Machine
+    hostgroups: forge
+    icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
+    statusmap_image: forge.gd2
+    2d_coords: 20.0,150.0
+
+services:
+# apache_service
+  - id: 0
+    use: nagios_service
+    service_description: "NRPE apache service check"
+    check_command: "check_nrpe!check_apache"
+    servicegroups: Availability
+
+# tomcat_service
+  - id: 1
+    use: nagios_service
+    service_description: "NRPE tomcat service check"
+    check_command: "check_nrpe!check_tomcat"
+    servicegroups: Availability
+
+# apache_check
+  - id: 2
+    use: nagios_service
+    service_description: "Auth webserver connectivity check"
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /piwik/ -k 'Accept: text/html' -e 200 -s 'Sign in'"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data'"
+    servicegroups: Connectivity
+
+  - id: 13
+    use: nagios_service
+    service_description: "PostgreSQL local connectivity check"
+    check_command: "check_nrpe!check_conn_postgresql"
+    servicegroups: Internals
+
+# root_check
+  - id: 4
+    use: nagios_service
+    service_description: "NRPE root disk usage check"
+    check_command: "check_nrpe!check_root"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
+    servicegroups: Internals
+
+# load_check
+  - id: 98
+    use: nagios_service
+    service_description: "NRPE CPU usage check"
+    check_command: "check_nrpe!check_load"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=load1,data&db=load5,data&db=load15,data"
+    servicegroups: Internals
+
+# memory_check
+  - id: 99
+    use: nagios_service
+    service_description: "NRPE RAM usage check"
+    check_command: "check_nrpe!check_memory"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=USED,data"
+    servicegroups: Internals
+
+nrpe_commands:
+  - command_name: check_load
+    plugin_name: check_load_extra
+    plugin_params: "-w 1,1,1 -c 2,2,2 -r"
+  - command_name: check_memory
+    plugin_name: check_mem
+    plugin_params: "-f -w 30 -c 10 -C"
+  - command_name: check_root
+    plugin_name: check_disk
+    plugin_params: "-w 30% -c 10% -p /"
+  - command_name: check_apache
+    plugin_name: check_procs
+    plugin_params: "-C apache2 -c 1:"
+  - command_name: check_tomcat
+    plugin_name: check_procs
+    plugin_params: "-C java -a tomcat7 -c 1:"
+  - command_name: check_conn_postgresql
+    plugin_name: check_postgresql
+    plugin_params: "postgres"
+
+host_commands:
+
+host_contacts:
