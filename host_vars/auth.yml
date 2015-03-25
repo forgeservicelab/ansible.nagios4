@@ -101,7 +101,7 @@ nrpe_commands:
     plugin_params: "-C slapd -c 1:"
   - command_name: check_cas_sessions
     plugin_name: check_cas_sessions
-    plugin_params: "-S -D /var/www/casino/db/production.sqlite3 -d 1 -s 5"
+    plugin_params: "-G -H dbserver.forgeservicelab.fi -p 5432 -U {{ casino_db_user }} -P {{ casino_db_pass }} -D CASinoApp_production -d 1 -s 5"
 
 host_commands:
   - command_name: check_cas
