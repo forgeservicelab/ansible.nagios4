@@ -64,6 +64,14 @@ services:
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/var,data"
     servicegroups: Internals
 
+# password_check
+  - id: 8
+    use: nagios_service
+    service_description: "Password recovery application connectivity check"
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /password/ -e 200"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
+    servicegroups: Connectivity
+
 # load_check
   - id: 98
     use: nagios_service
