@@ -10,18 +10,18 @@ host:
     2d_coords: 120.0,260.0
 
 services:
-# apache_service
+# nginx_service
   - id: 0
     use: nagios_service
-    service_description: "NRPE apache service check"
-    check_command: "check_nrpe!check_apache"
+    service_description: "NRPE nginx service check"
+    check_command: "check_nrpe!check_nginx"
     servicegroups: Availability
 
-# mysql_service
+# thin_service
   - id: 1
     use: nagios_service
-    service_description: "NRPE mysql service check"
-    check_command: "check_nrpe!check_mysql"
+    service_description: "NRPE thin service check"
+    check_command: "check_nrpe!check_thin"
     servicegroups: Availability
 
 # xmpp_service
@@ -35,7 +35,7 @@ services:
   - id: 7
     use: nagios_service
     service_description: "Redmine application connectivity check"
-    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u /redmine -d redmine/login -e 302"
+    check_command: "check_https!{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}!5!10!-u / -d cas -e 302"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=time,data"
     servicegroups: Connectivity
 
@@ -53,14 +53,6 @@ services:
     service_description: "NRPE root disk usage check"
     check_command: "check_nrpe!check_root"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
-    servicegroups: Internals
-
-# var_check
-  - id: 9
-    use: nagios_service
-    service_description: "NRPE var disk usage check"
-    check_command: "check_nrpe!check_var"
-    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/var,data"
     servicegroups: Internals
 
 # load_check
@@ -87,21 +79,18 @@ services:
     servicegroups: Internals
 
 nrpe_commands:
-  - command_name: check_apache
+  - command_name: check_nginx
     plugin_name: check_procs
-    plugin_params: "-C httpd -c 1:"
-  - command_name: check_mysql
+    plugin_params: "-C nginx -c 1:"
+  - command_name: check_thin
     plugin_name: check_procs
-    plugin_params: "-C mysqld -c 1:"
+    plugin_params: "-C ruby -a thin -c 1:"
   - command_name: check_jabber
     plugin_name: check_procs
     plugin_params: "--ereg-argument-array=.*openfire.* -c 1:"
   - command_name: check_root
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /"
-  - command_name: check_var
-    plugin_name: check_disk
-    plugin_params: "-w 30% -c 10% -p /var"
   - command_name: check_load
     plugin_name: check_load_extra
     plugin_params: "-w 1,1,1 -c 2,2,2 -r"
