@@ -1,2 +1,3 @@
-inventory
 *.key
+nagios.inventory
+nagios4.sh
