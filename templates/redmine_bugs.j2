@@ -106,7 +106,7 @@ Additional Info:
         bug['issue']['priority_id'] = 1
 
     headers = {'Content-type': 'application/json', 'X-Redmine-API-Key': '{{ redmine_api_key }}'}
-    request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues.json', json.dumps(bug), headers)
+    request = urllib2.Request('https://support.forgeservicelab.fi/issues.json', json.dumps(bug), headers)
     response = json.loads(urllib2.urlopen(request).read())
 
     tmpfile = open('/usr/local/nagios/var/redmine.bugs/%s_%s' %
@@ -142,7 +142,7 @@ def clear_alert(hostname, service):
     headers = {'Content-type': 'application/json', 'X-Redmine-API-Key': '{{ redmine_api_key }}'}
     opener = urllib2.build_opener(urllib2.HTTPHandler)
     for issue in find_open_issues(hostname, service):
-        request = urllib2.Request('https://support.forgeservicelab.fi/redmine/issues/%s.json' %
+        request = urllib2.Request('https://support.forgeservicelab.fi/issues/%s.json' %
                                   issue, json.dumps(data), headers)
         request.get_method = lambda: 'PUT'
         opener.open(request)
