@@ -18,7 +18,7 @@ services:
     servicegroups: Availability
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=procs,data&db=procs,crit_hi"
 
-  - id: 15 
+  - id: 15
     use: nagios_service
     service_description: "NRPE postgresql service check"
     check_command: "check_nrpe!check_postgresql"
@@ -44,10 +44,34 @@ services:
     check_command: "check_nrpe!check_postgresql_database"
     servicegroups: Availability
 
-  - id: 2
+  - id: 20
     use: nagios_service
-    service_description: "Filesystem snapshot age"
-    check_command: "check_nrpe!check_filesystem"
+    service_description: "Redmine filesystem snapshot age"
+    check_command: "check_nrpe!check_redmine_filesystem"
+    servicegroups: Availability
+
+  - id: 21
+    use: nagios_service
+    service_description: "Gitlab filesystem snapshot age"
+    check_command: "check_nrpe!check_gitlab_filesystem"
+    servicegroups: Availability
+
+  - id: 22
+    use: nagios_service
+    service_description: "Jenkins filesystem snapshot age"
+    check_command: "check_nrpe!check_jenkins_filesystem"
+    servicegroups: Availability
+
+  - id: 23
+    use: nagios_service
+    service_description: "LDAP filesystem snapshot age"
+    check_command: "check_nrpe!check_ldap_filesystem"
+    servicegroups: Availability
+
+  - id: 24
+    use: nagios_service
+    service_description: "Plaza filesystem snapshot age"
+    check_command: "check_nrpe!check_plaza_filesystem"
     servicegroups: Availability
 
 # data_check
@@ -114,9 +138,21 @@ nrpe_commands:
   - command_name: check_postgresql_database
     plugin_name: check_file_age
     plugin_params: "-f /data/database_snapshots/dbserver -w 86400 -c 172800"
-  - command_name: check_filesystem
+  - command_name: check_gitlab_filesystem
     plugin_name: check_file_age
-    plugin_params: "-f /data/filesystem_snapshots -w 86400 -c 172800"
+    plugin_params: "-f /data/filesystem_snapshots/gitlab -w 86400 -c 172800"
+  - command_name: check_jenkins_filesystem
+    plugin_name: check_file_age
+    plugin_params: "-f /data/filesystem_snapshots/jenkins -w 86400 -c 172800"
+  - command_name: check_ldap_filesystem
+    plugin_name: check_file_age
+    plugin_params: "-f /data/filesystem_snapshots/ldap -w 86400 -c 172800"
+  - command_name: check_plaza_filesystem
+    plugin_name: check_file_age
+    plugin_params: "-f /data/filesystem_snapshots/plaza -w 86400 -c 172800"
+  - command_name: check_redmine_filesystem
+    plugin_name: check_file_age
+    plugin_params: "-f /data/filesystem_snapshots/redmine -w 86400 -c 172800"
   - command_name: check_repl_mysql
     plugin_name: check_mysql
     plugin_params: "-S -u root -w 60 -c 300"
