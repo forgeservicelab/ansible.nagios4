@@ -2,7 +2,7 @@
 host:
   - use: nagios_host
     address: "{{ hostvars[target_inventory_hostname]['ansible_ssh_host'] if hostvars[target_inventory_hostname]['ansible_ssh_host'] is defined else hostvars[target_inventory_hostname]['inventory_hostname'] }}"
-    alias: Forge ServiceLab CI 
+    alias: Forge ServiceLab CI
     display_name: CI Machine
     hostgroups: forge
     icon_image: "{{ hostvars[target_inventory_hostname]['ansible_distribution'] }}.png"
@@ -39,6 +39,15 @@ services:
     check_command: "check_nrpe!check_root"
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=/,data"
     servicegroups: Internals
+
+# updates_check
+  - id: 97
+    use: nagios_service
+    service_description: "Pending package updates"
+    check_command: "check_nrpe!check_updates"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=available_upgrades,data"
+    servicegroups: Internals
+
 # load_check
   - id: 98
     use: nagios_service
@@ -56,6 +65,9 @@ services:
     servicegroups: Internals
 
 nrpe_commands:
+  - command_name: check_updates
+    plugin_name: check_apt
+    plugin_params: ''
   - command_name: check_load
     plugin_name: check_load_extra
     plugin_params: "-w 1,1,1 -c 2,2,2 -r"

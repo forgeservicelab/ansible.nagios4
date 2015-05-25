@@ -113,7 +113,18 @@ services:
     action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPoput()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=delay,data"
     servicegroups: Internals
 
+# updates_check
+  - id: 97
+    use: nagios_service
+    service_description: "Pending package updates"
+    check_command: "check_nrpe!check_updates"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=available_upgrades,data"
+    servicegroups: Internals
+
 nrpe_commands:
+  - command_name: check_updates
+    plugin_name: check_apt
+    plugin_params: ''
   - command_name: check_data
     plugin_name: check_disk
     plugin_params: "-w 30% -c 10% -p /data"

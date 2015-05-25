@@ -10,7 +10,7 @@ host:
     2d_coords: 245.0,150.0
 
 services:
-  - id: 15 
+  - id: 15
     use: nagios_service
     service_description: "NRPE postgresql service check"
     check_command: "check_nrpe!check_postgresql"
@@ -37,6 +37,15 @@ services:
     service_description: "PostgreSQL local connectivity check"
     check_command: "check_nrpe!check_conn_postgresql"
     servicegroups: Internals
+
+# updates_check
+  - id: 97
+    use: nagios_service
+    service_description: "Pending package updates"
+    check_command: "check_nrpe!check_updates"
+    action_url: "/nagios/cgi-bin/show.cgi?host=$HOSTNAME$&service=$SERVICEDESC$' onMouseOver='showGraphPopup(this)' onMouseOut='hideGraphPopup()' rel='/nagios/cgi-bin/showgraph.cgi?host=$HOSTNAME$&service=$SERVICEDESC$&db=available_upgrades,data"
+    servicegroups: Internals
+
 # load_check
   - id: 98
     use: nagios_service
@@ -54,6 +63,9 @@ services:
     servicegroups: Internals
 
 nrpe_commands:
+  - command_name: check_updates
+    plugin_name: check_apt
+    plugin_params: ''
   - command_name: check_load
     plugin_name: check_load_extra
     plugin_params: "-w 1,1,1 -c 2,2,2 -r"
